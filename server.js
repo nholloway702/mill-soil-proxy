@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
-import { Readable } from "node:stream";
 import {
   LIME_PRODUCTS, GRANULAR_FERTILIZERS, LIQUID_FERTILIZERS,
   ORGANIC_FERTILIZERS, PRE_EMERGENT, WEED_CONTROL,
@@ -192,16 +191,17 @@ app.post("/api/analyze", async (req, res) => {
     return res.status(500).json({ error: "ANTHROPIC_API_KEY is not set on the server." });
   }
 
+  console.log(`[analyze] Request received — segment: ${extractSegment(req.body) ?? "unknown"}`);
+
   try {
     const segment = extractSegment(req.body);
     const addition = buildSystemAddition(segment, req.body);
 
-    const body = { ...req.body, stream: true };
-    if (typeof body.system === "string" && addition) {
-      body.system = body.system + addition;
-    }
+    const fullSystemPrompt = typeof req.body.system === "string" && addition
+      ? req.body.system + addition
+      : req.body.system;
 
-    const upstream = await fetch("https://api.anthropic.com/v1/messages", {
+    const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -209,25 +209,19 @@ app.post("/api/analyze", async (req, res) => {
         "anthropic-version": "2023-06-01",
         "anthropic-beta": "pdfs-2024-09-25",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        ...req.body,
+        stream: false,
+        system: fullSystemPrompt,
+      }),
     });
 
-    if (!upstream.ok) {
-      const errData = await upstream.json();
-      return res.status(upstream.status).json(errData);
-    }
-
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    res.flushHeaders();
-
-    Readable.fromWeb(upstream.body).pipe(res);
+    const data = await anthropicResponse.json();
+    console.log(`[analyze] Sending response — status ${anthropicResponse.status}`);
+    res.status(anthropicResponse.status).json(data);
   } catch (err) {
-    console.error("Proxy error:", err);
-    if (!res.headersSent) {
-      res.status(502).json({ error: "Failed to reach Anthropic API.", detail: err.message });
-    }
+    console.error("[analyze] Error:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
