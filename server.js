@@ -1,7 +1,13 @@
 import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
-import { CATALOG_PROMPT_TEXT } from "./catalog.js";
+import { Readable } from "node:stream";
+import {
+  LIME_PRODUCTS, GRANULAR_FERTILIZERS, LIQUID_FERTILIZERS,
+  ORGANIC_FERTILIZERS, PRE_EMERGENT, WEED_CONTROL,
+  COMBINATION_PRODUCTS, INSECT_CONTROL, FUNGICIDES,
+  SEED, SOIL_AMENDMENTS, PROBIOTICS, buildCatalogText,
+} from "./catalog.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -55,11 +61,12 @@ Follow these rules for this customer type:
 - No Mill catalog products are available for this segment yet. Make agronomically sound recommendations and note "consult Mill staff for product and pricing" for every product entry.`,
 };
 
-// ─── catalog injection (residential and turf only) ────────────────────────────
+// ─── catalog injection preamble (rules + Solu-Cal guidance) ──────────────────
 
-const CATALOG_INJECTION = `
+const CATALOG_PREAMBLE = `
 
-You must ONLY recommend products from The Mill's official catalog listed below. Rules:
+Only recommend products from the categories provided below. Do not reference or suggest products outside this list.
+
 - Always include the exact product name AND SKU in every recommendation (e.g. "Dolomitic Pelletized Lime, SKU 1158240").
 - Never suggest generic product names or brands not in this catalog.
 - Match products precisely to the soil deficiency: for example, if Mg is low use Dolomitic Pelletized Lime (SKU 1158240) or Solu-Cal Magnesium Pelletized Lime (SKU 11110513) rather than a Hi Calcium lime. If pH is correct and only Ca is low, use Gypsum (SKU 115204). If P is deficient use 0-45-0 Triple Superphosphate (SKU 115173) or a high-P starter. If K is low and crop is sensitive to chloride, use 0-0-50 Sulfate of Potash (SKU 1154218) over Muriate of Potash.
@@ -94,16 +101,15 @@ LIME STRATEGY SECTION — when writing the limeStrategy field in the JSON output
 
 NEVER recommend standard pelletized lime, pulverized lime, or dolomitic ground limestone as the primary lime product for residential or turf segments. Those products may only be mentioned as a backup if Solu-Cal is unavailable.
 
-THE MILL — OFFICIAL PRODUCT CATALOG:
+THE MILL — OFFICIAL PRODUCT CATALOG (filtered for this request):
 
-${CATALOG_PROMPT_TEXT}`;
+`;
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 /**
  * Extract the segment ID from the user message text.
  * The frontend always opens the user message with "Segment: <label>".
- * Maps the human-readable label back to an internal ID.
  */
 function extractSegment(body) {
   try {
@@ -117,23 +123,65 @@ function extractSegment(body) {
     if (!match) return null;
 
     const label = match[1].trim().toLowerCase();
-    if (label.includes("residential"))               return "residential";
+    if (label.includes("residential"))                        return "residential";
     if (label.includes("turf") || label.includes("contractor")) return "turf";
     if (label.includes("equine") || label.includes("livestock")) return "equine";
-    if (label.includes("agronomy"))                  return "agronomy";
+    if (label.includes("agronomy"))                           return "agronomy";
   } catch (_) {}
   return null;
 }
 
+/** Pull the full user message text (lower-cased) for keyword matching. */
+function extractContextText(body) {
+  try {
+    const content = body?.messages?.[0]?.content;
+    const textBlock = Array.isArray(content)
+      ? content.find((b) => b.type === "text")?.text
+      : null;
+    return textBlock?.toLowerCase() ?? "";
+  } catch (_) { return ""; }
+}
+
+/**
+ * Build the filtered product list for this request.
+ * Always includes lime and granular fertilizers; adds other categories
+ * based on segment and keywords found in the customer context.
+ */
+function selectCategories(segment, contextText) {
+  const products = [...LIME_PRODUCTS, ...GRANULAR_FERTILIZERS];
+
+  if (segment === "turf") {
+    products.push(...LIQUID_FERTILIZERS, ...PRE_EMERGENT, ...COMBINATION_PRODUCTS, ...FUNGICIDES);
+  }
+  if (segment === "residential") {
+    products.push(...WEED_CONTROL, ...ORGANIC_FERTILIZERS);
+  }
+  if (/overseed|renovation|new lawn|new seeding|bare spots/.test(contextText)) {
+    products.push(...SEED);
+  }
+  if (/grubs|insects|chinch/.test(contextText)) {
+    products.push(...INSECT_CONTROL);
+  }
+  if (/compaction|organic matter|soil health/.test(contextText)) {
+    products.push(...SOIL_AMENDMENTS, ...PROBIOTICS);
+  }
+
+  return products;
+}
+
 /**
  * Build the text to append to the system prompt for a given segment.
- * Equine and agronomy skip the catalog constraint — staff pricing/availability
- * for those segments is handled manually.
+ * Equine and agronomy skip the catalog constraint — those segments are
+ * handled manually by staff.
  */
-function buildSystemAddition(segment) {
+function buildSystemAddition(segment, body) {
   const instructions = SEGMENT_INSTRUCTIONS[segment] ?? "";
   const useCatalog = segment === "residential" || segment === "turf";
-  return instructions + (useCatalog ? CATALOG_INJECTION : "");
+  if (!useCatalog) return instructions;
+
+  const contextText = extractContextText(body);
+  const products = selectCategories(segment, contextText);
+  return instructions + CATALOG_PREAMBLE + buildCatalogText(products);
 }
 
 // ─── route ────────────────────────────────────────────────────────────────────
@@ -146,9 +194,9 @@ app.post("/api/analyze", async (req, res) => {
 
   try {
     const segment = extractSegment(req.body);
-    const addition = buildSystemAddition(segment);
+    const addition = buildSystemAddition(segment, req.body);
 
-    const body = { ...req.body };
+    const body = { ...req.body, stream: true };
     if (typeof body.system === "string" && addition) {
       body.system = body.system + addition;
     }
@@ -164,11 +212,22 @@ app.post("/api/analyze", async (req, res) => {
       body: JSON.stringify(body),
     });
 
-    const data = await upstream.json();
-    res.status(upstream.status).json(data);
+    if (!upstream.ok) {
+      const errData = await upstream.json();
+      return res.status(upstream.status).json(errData);
+    }
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+
+    Readable.fromWeb(upstream.body).pipe(res);
   } catch (err) {
     console.error("Proxy error:", err);
-    res.status(502).json({ error: "Failed to reach Anthropic API.", detail: err.message });
+    if (!res.headersSent) {
+      res.status(502).json({ error: "Failed to reach Anthropic API.", detail: err.message });
+    }
   }
 });
 

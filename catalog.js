@@ -140,17 +140,33 @@ export const CATALOG = [
   { name: "Leafgro",                            sku: "44030",     weight: "1.5cf",  category: "Soil Amendments", description: "WSSC composted leaf and yard waste; improves organic matter and soil tilth" },
 ];
 
-/** Formatted text block for injection into Claude's system prompt */
-export const CATALOG_PROMPT_TEXT = (() => {
-  const byCategory = CATALOG.reduce((acc, p) => {
+// ── Category groups for filtered injection ─────────────────────────────────
+
+export const LIME_PRODUCTS        = CATALOG.filter(p => p.category === "Lime & Soil Conditioners");
+export const GRANULAR_FERTILIZERS = CATALOG.filter(p => p.category === "Granular Fertilizer");
+export const LIQUID_FERTILIZERS   = CATALOG.filter(p => p.category === "Liquid Fertilizer & Micronutrients");
+export const ORGANIC_FERTILIZERS  = CATALOG.filter(p => p.category === "Organic Fertilizer");
+export const PRE_EMERGENT         = CATALOG.filter(p => p.category === "Pre-Emergent");
+export const WEED_CONTROL         = CATALOG.filter(p =>
+  p.category === "Granular Broadleaf Weed Control" || p.category === "Liquid Weed Control"
+);
+export const COMBINATION_PRODUCTS = CATALOG.filter(p => p.category === "Combination Products");
+export const INSECT_CONTROL       = CATALOG.filter(p => p.category === "Grub & Insect Control");
+export const FUNGICIDES           = CATALOG.filter(p => p.category === "Turf Fungicides");
+export const SEED                 = CATALOG.filter(p => p.category.startsWith("Grass Seed"));
+export const SOIL_AMENDMENTS      = CATALOG.filter(p => p.category === "Soil Amendments");
+export const PROBIOTICS           = CATALOG.filter(p => p.category === "Plant Probiotics");
+
+/** Format a filtered array of products into the system-prompt text block, grouped by category */
+export function buildCatalogText(products) {
+  const byCategory = products.reduce((acc, p) => {
     (acc[p.category] = acc[p.category] || []).push(p);
     return acc;
   }, {});
-
   return Object.entries(byCategory)
-    .map(([cat, products]) => {
-      const lines = products.map(p => `  • ${p.name} (SKU: ${p.sku}, ${p.weight}) — ${p.description}`);
+    .map(([cat, prods]) => {
+      const lines = prods.map(p => `  • ${p.name} (SKU: ${p.sku}, ${p.weight}) — ${p.description}`);
       return `${cat}:\n${lines.join("\n")}`;
     })
     .join("\n\n");
-})();
+}
