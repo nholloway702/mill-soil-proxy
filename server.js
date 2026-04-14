@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
-import { CATALOG_PROMPT_TEXT } from "../frontend/src/catalog.js";
+import { CATALOG_PROMPT_TEXT } from "./catalog.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
