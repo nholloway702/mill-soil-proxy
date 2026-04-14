@@ -1,12 +1,7 @@
 import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
-import {
-  LIME_PRODUCTS, GRANULAR_FERTILIZERS, LIQUID_FERTILIZERS,
-  ORGANIC_FERTILIZERS, PRE_EMERGENT, WEED_CONTROL,
-  COMBINATION_PRODUCTS, INSECT_CONTROL, FUNGICIDES,
-  SEED, SOIL_AMENDMENTS, PROBIOTICS, buildCatalogText,
-} from "./catalog.js";
+import { CATALOG, buildCatalogText } from "./catalog.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,27 +9,24 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
-// ─── segment-specific behavior instructions ────────────────────────────────────
+// ─── segment behavior instructions ────────────────────────────────────────────
 
 const SEGMENT_INSTRUCTIONS = {
   residential: `
 SEGMENT: RESIDENTIAL (Homeowner)
-Follow these rules for this customer type:
 - Write all recommendations in plain English a homeowner can understand. No technical jargon.
 - All application rates in lbs per 1,000 sq ft only.
 - Prefer bag products the homeowner can apply with a broadcast spreader.
-- Program should be 3–4 applications per year maximum, with simple seasonal timing (Early Spring, Late Spring, Fall, Late Fall).
+- Program should follow The Mill's 8-step seasonal flow (see below).
 - Product list should show the bag quantities they need to buy for their total lawn size.
-- Customer notes should be warm, friendly, and encouraging — written like advice from a trusted local store, not a lab report.
-- Do not recommend liquid fertilizers, combination herbicide/fertilizer products, or professional-only products unless there is absolutely no other option.`,
+- Customer notes should be warm, friendly, and encouraging — written like advice from a trusted local store, not a lab report.`,
 
   turf: `
 SEGMENT: TURF / CONTRACTOR (Professional)
-Follow these rules for this customer type:
 - Use professional agronomic language. This customer understands XCU, pre-emergent, CEC, and fertility programs.
 - All application rates in lbs per 1,000 sq ft AND total product needed for the full job acreage.
 - Program should be detailed — 5–6 application windows including pre-emergent timing, fertilizer splits, and any liquid supplementation.
-- Recommend the best agronomic product for the situation regardless of complexity — liquid fertilizers, combination products, and pre-emergents are all appropriate.
+- Recommend the best agronomic product for the situation — liquid fertilizers, combination products, pre-emergents, fungicides, and probiotics are all appropriate.
 - Include tank mix notes where relevant (e.g. liquid iron with nitrogen application).
 - Product list should show total bags or gallons needed for the full job with SKUs.
 - Customer notes should be professional and concise, written like a program summary they can share with their own client.
@@ -42,7 +34,6 @@ Follow these rules for this customer type:
 
   equine: `
 SEGMENT: EQUINE & LIVESTOCK (Pasture Management)
-Follow these rules for this customer type:
 - Focus on forage quality, stand density, and weed suppression.
 - All rates in lbs per acre.
 - Program should follow a spring and fall structure typical for Mid-Atlantic pasture management.
@@ -52,64 +43,100 @@ Follow these rules for this customer type:
 
   agronomy: `
 SEGMENT: AGRONOMY (Farm / Row Crop)
-Follow these rules for this customer type:
 - Use full agronomic language appropriate for a farmer. Reference yield goals and economic thresholds.
 - All rates in lbs per acre.
-- Program should follow crop-specific timing (pre-plant, at-plant, side-dress, topdress as appropriate for the crop).
+- Program should follow crop-specific timing (pre-plant, at-plant, side-dress, topdress as appropriate).
 - Tailor recommendations to the specific crop and tillage system provided in the customer context.
 - No Mill catalog products are available for this segment yet. Make agronomically sound recommendations and note "consult Mill staff for product and pricing" for every product entry.`,
 };
 
-// ─── catalog injection preamble (rules + Solu-Cal guidance) ──────────────────
+// ─── residential: Lawn Care Guide decision tree ───────────────────────────────
 
-const CATALOG_PREAMBLE = `
+const RESIDENTIAL_DECISION_TREE = `
 
-Only recommend products from the categories provided below. Do not reference or suggest products outside this list.
+Only recommend products from the catalog at the bottom of these instructions. Do not reference or suggest any products outside this list. Always include the exact product name AND SKU in every recommendation.
 
-- Always include the exact product name AND SKU in every recommendation (e.g. "Dolomitic Pelletized Lime, SKU 1158240").
-- Never suggest generic product names or brands not in this catalog.
-- Match products precisely to the soil deficiency: for example, if Mg is low use Dolomitic Pelletized Lime (SKU 1158240) or Solu-Cal Magnesium Pelletized Lime (SKU 11110513) rather than a Hi Calcium lime. If pH is correct and only Ca is low, use Gypsum (SKU 115204). If P is deficient use 0-45-0 Triple Superphosphate (SKU 115173) or a high-P starter. If K is low and crop is sensitive to chloride, use 0-0-50 Sulfate of Potash (SKU 1154218) over Muriate of Potash.
-- For turf seeding recommendations, select a seed product from the catalog that matches the segment (e.g. pasture seed for equine, erosion-control seed for construction, shade mix for shaded areas).
-- Include SKUs in the "product" field of every annualProgram application and every productList entry.
+LAWN CARE GUIDE — FERTILIZER & PRODUCT DECISION TREE:
 
-LIME RECOMMENDATION RULES — FOLLOW THESE EXACTLY:
+PRIMARY FERTILIZER SELECTION:
+- Existing established lawn → 22-0-14 50% XCU with 5% Iron (SKU 115135) is the go-to primary fertilizer. The 5% iron delivers deep green color and promotes thick healthy turf.
+- New lawn or overseeding mentioned in context → 18-24-12 50% XCU Starter Fertilizer (SKU 115137). Promotes root growth, establishes new lawn faster. Only recommend for new seeding or when soil calls for phosphorus.
 
-Solu-Cal is The Mill's preferred and recommended lime product for all residential and turf contractor customers. Always recommend Solu-Cal over standard pelletized or pulverized lime unless there is a specific reason not to.
+SPRING WEED CONTROL (March–May):
+- Weed pressure mentioned → 18-0-4 with 0.38% Prodiamine (SKU 115101) — prevents crabgrass, controls weeds, prepares lawn for summer stress. Do NOT recommend if customer is overseeding.
+- Pre-emergent + broadleaf weed control both needed → 19-0-6 Lockup .17 Dimension (SKU 115100) — prevents crabgrass and kills existing weeds. Do NOT recommend if customer is overseeding.
 
-Why Solu-Cal: It corrects soil pH in 6–8 weeks vs. 10–18 months for traditional lime. One 50 lb bag equals the effectiveness of four 50 lb bags of standard lime. It contains beneficial microbes (Intensify Microbial Biocatalyst) that improve nutrient uptake. It produces 80% less dust during application. University tested at Penn State and Rutgers.
+SUMMER GRUB/INSECT CONTROL (May–June):
+- Grub/insect control needed, no extra nitrogen required → 0-0-7 .067 Acelepryn (SKU 115084)
+- Grub/insect control needed, nitrogen also needed → 15-0-5 .067 Acelepryn (SKU 115114)
 
-ALWAYS select the correct Solu-Cal variant based on soil data:
-- Low pH + Magnesium (Mg) below 80 ppm OR %Mg below 12% → recommend Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
-- Low pH + Mg adequate → recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
-- Low pH + Organic Matter below 2.5% → recommend Solu-Cal Humic Plus (SKU 1103740) — adds humic acids to feed soil biology while correcting pH
-- Low pH + compaction or water infiltration issues noted → recommend Solu-Cal Aqua Ca Humic Plus (SKU 11111035) — includes hydration surfactant
+FALL FEEDING (October–November):
+- Soil pH at or above 6.0 → 19-0-10 20% XCU 13% CA 2% FE (SKU 115110) — thick green fall turf, prepares roots for winter, contains 22% Solu-Cal to maintain pH
+- Soil pH still needs correction → 32-0-6 30% XCU (SKU 115952) paired with a Solu-Cal lime application. Note: 32-0-6 is a fall winterizing option when pH still needs work — it is NOT the default fertilizer for residential programs.
 
-APPLICATION RATES — use these exact rates:
-- To RAISE pH: 12.5 lbs per 1,000 sq ft (residential) or 550 lbs per acre (turf contractor)
-- To MAINTAIN pH: 6 lbs per 1,000 sq ft or 260 lbs per acre
-- Maximum per application: 12.5 lbs per 1,000 sq ft — if more lime is needed, split into multiple applications 8 weeks apart, up to 3 per year
-- One 50 lb bag covers 4,000 sq ft at the raise rate
+8-STEP SEASONAL PROGRAM STRUCTURE:
+1. Late Winter — Soil analysis (already complete)
+2. March–April — Pre-emergent weed control (skip entirely if customer is overseeding)
+3. May–June — Primary fertilizer application
+4. May–June — Grub/insect control if needed
+5. September — Seed if needed
+6. September — Greener grass application (18-24-12 starter for new lawns, 22-0-14 for established)
+7. October–November — Fall feeding (19-0-10 if pH is at or above 6.0; 32-0-6 paired with lime if pH still needs work)
+8. Spring/Fall/Winter — Lime as needed per the Solu-Cal rules below
 
-LIME STRATEGY SECTION — when writing the limeStrategy field in the JSON output, always:
-1. Lead with the recommended Solu-Cal product by name and SKU
-2. Explain in plain English why Solu-Cal works faster than traditional lime (same season results)
-3. Give the exact rate and number of bags needed based on the customer's lawn size or acreage
-4. Note the split application schedule if total lime needed exceeds 12.5 lbs per 1,000 sq ft
-5. For residential customers: explain this in simple terms — "instead of waiting a year to see results, you'll see improvement this season"
-6. For turf contractors: include the per-acre rate, total product needed for the job, and note the labor/storage savings vs. traditional lime
+LIME SELECTION — FOLLOW THESE RULES EXACTLY:
+Always recommend Solu-Cal over standard pelletized or pulverized lime for residential customers.
+- Low pH + Mg below 80 ppm OR %Mg below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- Low pH + Mg adequate → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
+- Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
+Application rates: 12.5 lbs per 1,000 sq ft to raise pH; 6 lbs per 1,000 sq ft to maintain pH.
+One 50 lb bag covers 4,000 sq ft at the raise rate. Split into multiple applications 8 weeks apart if more than 12.5 lbs/1,000 sq ft is needed.
+In the limeStrategy field: name the specific Solu-Cal product and SKU, explain why it works faster than traditional lime, give exact bags needed, and note the split schedule if applicable.
 
-NEVER recommend standard pelletized lime, pulverized lime, or dolomitic ground limestone as the primary lime product for residential or turf segments. Those products may only be mentioned as a backup if Solu-Cal is unavailable.
-
-THE MILL — OFFICIAL PRODUCT CATALOG (filtered for this request):
+THE MILL — RESIDENTIAL PRODUCT CATALOG:
 
 `;
 
+// ─── turf: full catalog preamble ──────────────────────────────────────────────
+
+const TURF_CATALOG_PREAMBLE = `
+
+Only recommend products from The Mill's catalog listed below. Do not reference or suggest products outside this list. Always include the exact product name AND SKU in every recommendation.
+
+- Match products precisely to soil deficiencies and program needs.
+- If Mg is low use Dolomitic Pelletized Lime (SKU 1158240) or Solu-Cal Magnesium (SKU 11110513) rather than Hi Calcium lime. If pH is correct and only Ca is low, use Gypsum (SKU 115204). If P is deficient use 0-45-0 Triple Superphosphate (SKU 115173). If K is low and crop is chloride-sensitive, use 0-0-50 Sulfate of Potash (SKU 1154218) over Muriate of Potash.
+- Include SKUs in the "product" field of every annualProgram application and every productList entry.
+
+SOLU-CAL LIME RULES:
+Solu-Cal is The Mill's preferred lime for turf contractor customers.
+- Low pH + Mg below 80 ppm OR %Mg below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- Low pH + Mg adequate → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
+- Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
+Rates: 550 lbs per acre to raise pH; 260 lbs per acre to maintain. Split if total needed exceeds one application.
+In the limeStrategy field: name the Solu-Cal product and SKU, give per-acre rate, total product for the full job, and note labor/storage savings vs traditional lime.
+
+THE MILL — FULL PRODUCT CATALOG:
+
+`;
+
+// ─── SKUs included in every residential recommendation ────────────────────────
+
+const RESIDENTIAL_CORE_SKUS = new Set([
+  "115135",   // 22-0-14 50% XCU with 5% Iron — established lawn primary
+  "115137",   // 18-24-12 50% XCU Starter — new lawn / overseeding
+  "115952",   // 32-0-6 30% XCU — fall winterizer when pH needs work
+  "115110",   // 19-0-10 20% XCU 13% CA 2% FE — fall when pH ok
+  "115101",   // 18-0-4 .38 Prodiamine — spring pre-emergent
+  "115100",   // 19-0-6 Lockup .17 Dimension — spring combo pre-emergent + weed
+  "115084",   // 0-0-7 .067 Acelepryn — summer grub, no N
+  "115114",   // 15-0-5 .067 Acelepryn — summer grub, with N
+  "10234071", // 6-4-0 Milorganite — organic option
+]);
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
-/**
- * Extract the segment ID from the user message text.
- * The frontend always opens the user message with "Segment: <label>".
- */
 function extractSegment(body) {
   try {
     const content = body?.messages?.[0]?.content;
@@ -117,20 +144,17 @@ function extractSegment(body) {
       ? content.find((b) => b.type === "text")?.text
       : null;
     if (!textBlock) return null;
-
     const match = textBlock.match(/^Segment:\s*(.+)/m);
     if (!match) return null;
-
     const label = match[1].trim().toLowerCase();
-    if (label.includes("residential"))                        return "residential";
+    if (label.includes("residential"))                          return "residential";
     if (label.includes("turf") || label.includes("contractor")) return "turf";
     if (label.includes("equine") || label.includes("livestock")) return "equine";
-    if (label.includes("agronomy"))                           return "agronomy";
+    if (label.includes("agronomy"))                             return "agronomy";
   } catch (_) {}
   return null;
 }
 
-/** Pull the full user message text (lower-cased) for keyword matching. */
 function extractContextText(body) {
   try {
     const content = body?.messages?.[0]?.content;
@@ -142,45 +166,32 @@ function extractContextText(body) {
 }
 
 /**
- * Build the filtered product list for this request.
- * Always includes lime and granular fertilizers; adds other categories
- * based on segment and keywords found in the customer context.
- */
-function selectCategories(segment, contextText) {
-  const products = [...LIME_PRODUCTS, ...GRANULAR_FERTILIZERS];
-
-  if (segment === "turf") {
-    products.push(...LIQUID_FERTILIZERS, ...PRE_EMERGENT, ...COMBINATION_PRODUCTS, ...FUNGICIDES);
-  }
-  if (segment === "residential") {
-    products.push(...WEED_CONTROL, ...ORGANIC_FERTILIZERS);
-  }
-  if (/overseed|renovation|new lawn|new seeding|bare spots/.test(contextText)) {
-    products.push(...SEED);
-  }
-  if (/grubs|insects|chinch/.test(contextText)) {
-    products.push(...INSECT_CONTROL);
-  }
-  if (/compaction|organic matter|soil health/.test(contextText)) {
-    products.push(...SOIL_AMENDMENTS, ...PROBIOTICS);
-  }
-
-  return products;
-}
-
-/**
- * Build the text to append to the system prompt for a given segment.
- * Equine and agronomy skip the catalog constraint — those segments are
- * handled manually by staff.
+ * Build the system prompt addition for a given segment.
+ *
+ * Residential — Lawn Care Guide decision tree + focused product catalog.
+ * Turf        — full 101-product catalog, professional judgment.
+ * Equine/Agronomy — segment instructions only, no catalog (staff handles manually).
  */
 function buildSystemAddition(segment, body) {
   const instructions = SEGMENT_INSTRUCTIONS[segment] ?? "";
-  const useCatalog = segment === "residential" || segment === "turf";
-  if (!useCatalog) return instructions;
 
-  const contextText = extractContextText(body);
-  const products = selectCategories(segment, contextText);
-  return instructions + CATALOG_PREAMBLE + buildCatalogText(products);
+  if (segment === "residential") {
+    const contextText = extractContextText(body);
+    const limeProducts = CATALOG.filter(p => p.category === "Lime & Soil Conditioners");
+    const coreProducts = CATALOG.filter(p => RESIDENTIAL_CORE_SKUS.has(p.sku));
+    const products = [...limeProducts, ...coreProducts];
+    if (/overseed|renovation|new lawn|new seeding|bare spots/i.test(contextText)) {
+      products.push(...CATALOG.filter(p => p.category.startsWith("Grass Seed")));
+    }
+    return instructions + RESIDENTIAL_DECISION_TREE + buildCatalogText(products);
+  }
+
+  if (segment === "turf") {
+    return instructions + TURF_CATALOG_PREAMBLE + buildCatalogText(CATALOG);
+  }
+
+  // equine and agronomy: no catalog injection
+  return instructions;
 }
 
 // ─── route ────────────────────────────────────────────────────────────────────
