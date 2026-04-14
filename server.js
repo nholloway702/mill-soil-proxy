@@ -11,7 +11,7 @@ app.use(express.json({ limit: "50mb" }));
 
 const CATALOG_INJECTION = `
 
-You must ONLY recommend products from The Mill of Bel Air's official catalog listed below. Rules:
+You must ONLY recommend products from The Mill's official catalog listed below. Rules:
 - Always include the exact product name AND SKU in every recommendation (e.g. "Dolomitic Pelletized Lime, SKU 1158240").
 - Never suggest generic product names or brands not in this catalog.
 - Match products precisely to the soil deficiency: for example, if Mg is low use Dolomitic Pelletized Lime (SKU 1158240) or Solu-Cal Magnesium Pelletized Lime (SKU 11110513) rather than a Hi Calcium lime. If pH is correct and only Ca is low, use Gypsum (SKU 115204). If P is deficient use 0-45-0 Triple Superphosphate (SKU 115173) or a high-P starter. If K is low and crop is sensitive to chloride, use 0-0-50 Sulfate of Potash (SKU 1154218) over Muriate of Potash.
