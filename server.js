@@ -9,6 +9,54 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
+// ─── segment-specific behavior instructions ────────────────────────────────────
+
+const SEGMENT_INSTRUCTIONS = {
+  residential: `
+SEGMENT: RESIDENTIAL (Homeowner)
+Follow these rules for this customer type:
+- Write all recommendations in plain English a homeowner can understand. No technical jargon.
+- All application rates in lbs per 1,000 sq ft only.
+- Prefer bag products the homeowner can apply with a broadcast spreader.
+- Program should be 3–4 applications per year maximum, with simple seasonal timing (Early Spring, Late Spring, Fall, Late Fall).
+- Product list should show the bag quantities they need to buy for their total lawn size.
+- Customer notes should be warm, friendly, and encouraging — written like advice from a trusted local store, not a lab report.
+- Do not recommend liquid fertilizers, combination herbicide/fertilizer products, or professional-only products unless there is absolutely no other option.`,
+
+  turf: `
+SEGMENT: TURF / CONTRACTOR (Professional)
+Follow these rules for this customer type:
+- Use professional agronomic language. This customer understands XCU, pre-emergent, CEC, and fertility programs.
+- All application rates in lbs per 1,000 sq ft AND total product needed for the full job acreage.
+- Program should be detailed — 5–6 application windows including pre-emergent timing, fertilizer splits, and any liquid supplementation.
+- Recommend the best agronomic product for the situation regardless of complexity — liquid fertilizers, combination products, and pre-emergents are all appropriate.
+- Include tank mix notes where relevant (e.g. liquid iron with nitrogen application).
+- Product list should show total bags or gallons needed for the full job with SKUs.
+- Customer notes should be professional and concise, written like a program summary they can share with their own client.
+- Flag any situations where a custom blend would outperform a bagged product.`,
+
+  equine: `
+SEGMENT: EQUINE & LIVESTOCK (Pasture Management)
+Follow these rules for this customer type:
+- Focus on forage quality, stand density, and weed suppression.
+- All rates in lbs per acre.
+- Program should follow a spring and fall structure typical for Mid-Atlantic pasture management.
+- Note any products or nutrients that could be harmful to horses or livestock at high rates.
+- Customer notes should acknowledge the connection between pasture quality and animal health.
+- No Mill catalog products are available for this segment yet. Make agronomically sound recommendations and note "consult Mill staff for product and pricing" for every product entry.`,
+
+  agronomy: `
+SEGMENT: AGRONOMY (Farm / Row Crop)
+Follow these rules for this customer type:
+- Use full agronomic language appropriate for a farmer. Reference yield goals and economic thresholds.
+- All rates in lbs per acre.
+- Program should follow crop-specific timing (pre-plant, at-plant, side-dress, topdress as appropriate for the crop).
+- Tailor recommendations to the specific crop and tillage system provided in the customer context.
+- No Mill catalog products are available for this segment yet. Make agronomically sound recommendations and note "consult Mill staff for product and pricing" for every product entry.`,
+};
+
+// ─── catalog injection (residential and turf only) ────────────────────────────
+
 const CATALOG_INJECTION = `
 
 You must ONLY recommend products from The Mill's official catalog listed below. Rules:
@@ -18,9 +66,49 @@ You must ONLY recommend products from The Mill's official catalog listed below. 
 - For turf seeding recommendations, select a seed product from the catalog that matches the segment (e.g. pasture seed for equine, erosion-control seed for construction, shade mix for shaded areas).
 - Include SKUs in the "product" field of every annualProgram application and every productList entry.
 
-THE MILL OF BEL AIR — OFFICIAL PRODUCT CATALOG:
+THE MILL — OFFICIAL PRODUCT CATALOG:
 
 ${CATALOG_PROMPT_TEXT}`;
+
+// ─── helpers ──────────────────────────────────────────────────────────────────
+
+/**
+ * Extract the segment ID from the user message text.
+ * The frontend always opens the user message with "Segment: <label>".
+ * Maps the human-readable label back to an internal ID.
+ */
+function extractSegment(body) {
+  try {
+    const content = body?.messages?.[0]?.content;
+    const textBlock = Array.isArray(content)
+      ? content.find((b) => b.type === "text")?.text
+      : null;
+    if (!textBlock) return null;
+
+    const match = textBlock.match(/^Segment:\s*(.+)/m);
+    if (!match) return null;
+
+    const label = match[1].trim().toLowerCase();
+    if (label.includes("residential"))               return "residential";
+    if (label.includes("turf") || label.includes("contractor")) return "turf";
+    if (label.includes("equine") || label.includes("livestock")) return "equine";
+    if (label.includes("agronomy"))                  return "agronomy";
+  } catch (_) {}
+  return null;
+}
+
+/**
+ * Build the text to append to the system prompt for a given segment.
+ * Equine and agronomy skip the catalog constraint — staff pricing/availability
+ * for those segments is handled manually.
+ */
+function buildSystemAddition(segment) {
+  const instructions = SEGMENT_INSTRUCTIONS[segment] ?? "";
+  const useCatalog = segment === "residential" || segment === "turf";
+  return instructions + (useCatalog ? CATALOG_INJECTION : "");
+}
+
+// ─── route ────────────────────────────────────────────────────────────────────
 
 app.post("/api/analyze", async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -29,10 +117,12 @@ app.post("/api/analyze", async (req, res) => {
   }
 
   try {
-    // Append catalog to whatever system prompt the frontend sent
+    const segment = extractSegment(req.body);
+    const addition = buildSystemAddition(segment);
+
     const body = { ...req.body };
-    if (typeof body.system === "string") {
-      body.system = body.system + CATALOG_INJECTION;
+    if (typeof body.system === "string" && addition) {
+      body.system = body.system + addition;
     }
 
     const upstream = await fetch("https://api.anthropic.com/v1/messages", {
