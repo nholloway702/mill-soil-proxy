@@ -56,52 +56,60 @@ const RESIDENTIAL_DECISION_TREE = `
 
 Only recommend products from the catalog at the bottom of these instructions. Do not reference or suggest any products outside this list. Always include the exact product name AND SKU in every recommendation.
 
-LAWN CARE GUIDE — FERTILIZER & PRODUCT DECISION TREE:
+THE MILL 4-STEP LAWN PROGRAM — PRIMARY RECOMMENDATION FOR ALL RESIDENTIAL CUSTOMERS:
 
-PRIMARY FERTILIZER SELECTION:
-- Existing established lawn → 22-0-14 50% XCU with 5% Iron (SKU 115135) is the go-to primary fertilizer. The 5% iron delivers deep green color and promotes thick healthy turf.
-- New lawn or overseeding mentioned in context → 18-24-12 50% XCU Starter Fertilizer (SKU 115137). Promotes root growth, establishes new lawn faster. Only recommend for new seeding or when soil calls for phosphorus.
+STEP 1 — Early Spring (Mid-March to April 15):
+Product: 18-0-4 25% PCU with 0.38% Prodiamine (SKU 115101)
+Rate: 1 bag per 12,500 sq ft
+Purpose: Pre-emergent weed preventer with fertilizer. Controls crabgrass, Japanese stilt grass, sand burs, and other annual weeds. This is THE #1 recommended spring pre-emergent — always lead with this for spring.
+EXCEPTION: If customer mentions overseeding, new lawn, or bare spots — skip Step 1 entirely and use 18-24-12 50% XCU Starter Fertilizer (SKU 115137) instead. Explain in the program that pre-emergent was skipped to allow seeding.
 
-SPRING PRE-EMERGENT (March–April) — REQUIRED IN EVERY RESIDENTIAL PROGRAM:
-Every residential program must include a March–April pre-emergent step. The only exception is if the customer is overseeding or establishing a new lawn — in that case, skip pre-emergent and explain why.
-- Default (no overseeding) → 19-0-6 Lockup .17 Dimension (SKU 115100) — prevents crabgrass, kills existing broadleaf weeds, and prepares the lawn for summer. This is the standard spring step for all residential programs.
-- Customer mentions both weeds AND insects as concerns → 13-0-5 Acelepryn/Dimension (SKU 115088) — combines pre-emergent weed control with season-long grub and insect protection in one application.
-- Do NOT skip this step unless the customer is overseeding.
+STEP 2 — Mid-Spring (Mid-May to June 1, 6–8 weeks after Step 1):
+Product: 19-0-6 Lockup .17 Dimension (SKU 115100)
+Rate: 1 bag per 11,400 sq ft
+Purpose: Pre-emergent weed preventer plus post-emergent broadleaf weed control. Follow-up to Step 1 for full-program customers. Prevents late crabgrass and knocks out any existing broadleaf weeds.
 
-SUMMER GRUB/INSECT CONTROL (May–June) — REQUIRED IN EVERY RESIDENTIAL PROGRAM:
-Every residential program must include a May–June grub and insect control step. Always note it controls grubs, armyworms, fleas, ants, and other turf insects.
-- Small lawn or budget-conscious → 0-0-7 .067 Acelepryn (SKU 115084) — pure insect control, no nitrogen added.
-- Customer wants feeding plus insect control in one pass → 15-0-5 .067 Acelepryn (SKU 115114) — feeds the lawn while providing season-long insect protection.
-- If 13-0-5 Acelepryn/Dimension (SKU 115088) was used in spring, note that grub protection may already be covered and adjust accordingly.
+STEP 3 — Late Summer (Labor Day, early September):
+Product: 22-0-14 50% XCU with 5% Iron (SKU 115135)
+Rate: 1 bag per 12,500 sq ft
+Purpose: Strengthens the plant and creates green-up after summer stress. The 5% iron delivers deep color. Crucial for rejuvenating grass after summer heat.
 
-FALL FEEDING (October–November):
-- Soil pH at or above 6.0 → 19-0-10 20% XCU 13% CA 2% FE (SKU 115110) — thick green fall turf, prepares roots for winter, contains 22% Solu-Cal to maintain pH.
-- Soil pH still needs correction → 32-0-6 30% XCU (SKU 115952) paired with a Solu-Cal lime application. Note: 32-0-6 is a fall winterizing option when pH still needs work — it is NOT the default fertilizer for residential programs.
+STEP 4 — Mid-Fall (Mid to Late October):
+Product: 32-0-6 30% XCU (SKU 115952)
+Rate: 1 bag per 12,500 sq ft
+Purpose: Winterization fertilizer to prepare the lawn for next spring. Provides great growth and green-up. 32-0-6 is the Step 4 fall winterizer — it is ONLY used here and is NOT a general-purpose fertilizer for other steps.
 
-8-STEP SEASONAL PROGRAM STRUCTURE:
-1. Late Winter — Soil analysis (already complete)
-2. March–April — Pre-emergent weed control (REQUIRED — skip only if overseeding, and explain why)
-3. May–June — Primary fertilizer application
-4. May–June — Grub/insect control (REQUIRED — controls grubs, armyworms, fleas, ants, and other turf insects)
-5. September — Seed if needed
-6. September — Greener grass application (18-24-12 starter for new lawns, 22-0-14 for established)
-7. October–November — Fall feeding (19-0-10 if pH is at or above 6.0; 32-0-6 paired with lime if pH still needs work)
-8. Spring/Fall/Winter — Lime as needed per the Solu-Cal rules below
+ADD-ONS — recommend alongside the 4-step based on soil data and customer context:
+- Grub/insect protection: 0-0-7 .067 Acelepryn (SKU 115084) — season-long control of grubs, armyworms, fleas, and ants. Recommend whenever customer mentions grubs, insects, or unexplained turf damage.
+- Disease/fungicide: Fungicide with Azoxy & PPZ (SKU 115079) — preventative and curative for brown patch, dollar spot, and other diseases. Recommend if customer mentions disease, fungus, or recurring lawn problems.
+- Broadleaf spot treatment: Trimec Granular (SKU 115130) — topical broadleaf weed control. Recommend if broadleaf weeds are a concern beyond what Steps 1 and 2 address.
+- Lime: Always Solu-Cal per the lime rules below. Lime is an add-on to the 4-step program, not a replacement for any step.
+
+NEW SEEDING / STARTER FERTILIZER EXCEPTION:
+If customer mentions new lawn, overseeding, bare spots, or new seeding:
+- Skip Step 1 pre-emergent entirely (pre-emergent will prevent seed germination).
+- Replace Step 1 with 18-24-12 50% XCU Starter Fertilizer (SKU 115137). Apply per label for new seedings. The heavy phosphorus (24%) promotes strong root development — this is the best option for any lawn establishment situation.
+- Always recommend 18-24-12 when phosphorus is low on the soil test AND customer is seeding.
+
+FLEXIBILITY RULES:
+- If soil data shows a specific deficiency the standard 4-step doesn't address, note it and add a targeted recommendation alongside the program.
+- If customer goals suggest a modification (heavy weed pressure, renovation, sports use), adjust and explain why.
+- Always frame the 4-step as the backbone — add-ons and adjustments are layered on top.
 
 PRODUCT QUANTITY CALCULATIONS — FOLLOW EXACTLY:
-The estimatedQty field in productList must always be the total bags needed for the whole lawn for the full season.
-- Step 1: Get lawn size from customer context. If not provided, assume 5,000 sq ft and state that assumption.
-- Step 2: Calculate total lbs needed = (lawn size in sq ft ÷ 1,000) × rate per 1,000 sq ft × number of applications.
-- Step 3: Divide total lbs by 50 to get bag count. Round up to the nearest whole bag.
-- Step 4: Express as "X bags (50 lb each)" — never as "X bags per 1,000 sq ft".
-- Example: 5,000 sq ft lawn, 3 lime applications at 12.5 lbs/1,000 sq ft = (5 × 12.5 × 3) = 187.5 lbs = 4 bags (50 lb each).
-- Example: 5,000 sq ft lawn, 3 fertilizer applications at 4.5 lbs/1,000 sq ft = (5 × 4.5 × 3) = 67.5 lbs = 2 bags (50 lb each).
+Get lawn size from customer context. If not provided, assume 5,000 sq ft and state that assumption.
+- Step 1 (SKU 115101): bags = lawn sq ft ÷ 12,500, round up to nearest whole bag
+- Step 2 (SKU 115100): bags = lawn sq ft ÷ 11,400, round up to nearest whole bag
+- Step 3 (SKU 115135): bags = lawn sq ft ÷ 12,500, round up to nearest whole bag
+- Step 4 (SKU 115952): bags = lawn sq ft ÷ 12,500, round up to nearest whole bag
+- Add-ons: follow label rate; express as whole bags in the product list
+Express all quantities as "X bag(s)" — never as bags per 1,000 sq ft.
 
 LIME RATES AND LANGUAGE — CRITICAL RULES:
 - The maximum Solu-Cal rate is 12.5 lbs per 1,000 sq ft per application.
 - Never state a total lime rate higher than 12.5 lbs per 1,000 sq ft in a single sentence.
-- If more lime is needed, always express it as multiple applications: "X applications of 12.5 lbs per 1,000 sq ft spaced 8 weeks apart."
-- Maximum 3 applications per year. If more than 3 applications are needed, continue into the following year.
+- If more lime is needed, always express it as: "X applications of 12.5 lbs per 1,000 sq ft spaced 8 weeks apart."
+- Maximum 3 applications per year. If more than 3 are needed, continue into the following year.
 - One 50 lb bag covers 4,000 sq ft at the raise rate (12.5 lbs/1,000 sq ft).
 
 LIME SELECTION — FOLLOW THESE RULES EXACTLY:
@@ -110,7 +118,7 @@ Always recommend Solu-Cal over standard pelletized or pulverized lime for reside
 - Low pH + Mg adequate → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 - Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
-In the limeStrategy field: name the specific Solu-Cal product and SKU, explain why it works faster than traditional lime (same-season results vs. 10–18 months for standard lime), state the number of applications needed as "X applications of 12.5 lbs per 1,000 sq ft spaced 8 weeks apart", give the exact total bag count for the full lawn, and note if the schedule runs into the following year.
+In the limeStrategy field: name the specific Solu-Cal product and SKU, explain why it works faster than traditional lime (same-season results vs. 10–18 months for standard lime), state the number of applications as "X applications of 12.5 lbs per 1,000 sq ft spaced 8 weeks apart", give the exact total bag count for the full lawn, and note if the schedule runs into the following year.
 
 THE MILL — RESIDENTIAL PRODUCT CATALOG:
 
@@ -142,16 +150,17 @@ THE MILL — FULL PRODUCT CATALOG:
 // ─── SKUs included in every residential recommendation ────────────────────────
 
 const RESIDENTIAL_CORE_SKUS = new Set([
-  "115135",   // 22-0-14 50% XCU with 5% Iron — established lawn primary
-  "115137",   // 18-24-12 50% XCU Starter — new lawn / overseeding
-  "115952",   // 32-0-6 30% XCU — fall winterizer when pH needs work
-  "115110",   // 19-0-10 20% XCU 13% CA 2% FE — fall when pH ok
-  "115101",   // 18-0-4 .38 Prodiamine — spring pre-emergent (alternate)
-  "115100",   // 19-0-6 Lockup .17 Dimension — default spring pre-emergent + weed
-  "115088",   // 13-0-5 Acelepryn/Dimension — spring combo when weeds + insects both concern
-  "115084",   // 0-0-7 .067 Acelepryn — summer grub, no N
-  "115114",   // 15-0-5 .067 Acelepryn — summer grub, with N
-  "10234071", // 6-4-0 Milorganite — organic option
+  // ── 4-step core ───────────────────────────────────────────────────────────
+  "115101",   // Step 1 — 18-0-4 25% PCU .38 Prodiamine — early spring pre-emergent
+  "115100",   // Step 2 — 19-0-6 Lockup .17 Dimension — mid-spring weed control
+  "115135",   // Step 3 — 22-0-14 50% XCU with 5% Iron — late summer green-up
+  "115952",   // Step 4 — 32-0-6 30% XCU — fall winterizer
+  // ── seeding exception ─────────────────────────────────────────────────────
+  "115137",   // 18-24-12 50% XCU Starter — replaces Step 1 when overseeding
+  // ── add-ons ───────────────────────────────────────────────────────────────
+  "115084",   // 0-0-7 .067 Acelepryn — grub/insect control add-on
+  "115079",   // Fungicide with Azoxy & PPZ — disease control add-on
+  "115130",   // Trimec Granular — broadleaf spot treatment add-on
 ]);
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
