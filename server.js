@@ -78,15 +78,13 @@ REPORT READING:
 - Lime is expressed in Tons/A in agronomy reports — always use tons/acre not lbs/acre for lime.
 - Some fields will have multiple crops listed (e.g. Corn + Triticale, Corn + Wheat) — treat each crop as a separate application in the annual program.
 
-LIME CONVERSION FOR SOLU-CAL:
-When lime is recommended in the lab report (Tons/A), convert to Solu-Cal as follows:
-- Traditional lime rate (tons/acre) x 0.25 = Solu-Cal equivalent (tons/acre)
-- Convert to lbs: Solu-Cal tons/acre x 2000 = lbs/acre
-- Example: 1.0 ton/acre traditional lime = 0.25 tons = 500 lbs/acre Solu-Cal
-- Example: 0.8 tons/acre = 0.2 tons = 400 lbs/acre Solu-Cal
+LIME CONVERSION FOR SOLU-CAL (agronomy — tons/acre format):
+The mandatory ÷4 conversion rule applies — see SOLU-CAL RATE CALCULATION section.
+- Lab tons/acre ÷ 4 = Solu-Cal tons/acre; then × 2,000 = Solu-Cal lbs/acre
 - If Mg is also low → recommend Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
 - If Mg is adequate → recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
-- Always note: "Solu-Cal works at 1/4 the rate of traditional lime, correcting pH in the same growing season rather than 12-18 months"
+- Always state both the lab's traditional rate AND the Solu-Cal equivalent in limeStrategy
+- Always note: "Solu-Cal corrects pH in the same growing season vs. 12-18 months for traditional lime"
 - If lime rate is 0.0 tons/acre → no lime needed, state pH is adequate
 
 NITROGEN PROGRAM:
@@ -234,6 +232,53 @@ farmSummaryTable — include this as a top-level field in the JSON response. One
   - notes: any lab application comments for this field (side-band placement, sulfur form, boron caution, etc.)`,
 };
 
+// ─── Solu-Cal mandatory conversion — injected into every segment's prompt ────────
+
+const SOLU_CAL_MANDATORY_CONVERSION = `
+
+SOLU-CAL RATE CALCULATION — MANDATORY CONVERSION (applies to all segments):
+
+The lab report provides lime recommendations in traditional lime equivalents. Solu-Cal works at EXACTLY 1/4 the rate. You MUST divide by 4 before writing any Solu-Cal rate. Never apply the lab's lime number directly as a Solu-Cal rate.
+
+FOR RESIDENTIAL AND TURF REPORTS (lab rate in lbs per 1,000 sq ft):
+Step 1: Read the lab's lime recommendation in lbs per 1,000 sq ft
+Step 2: Divide by 4 → this is total Solu-Cal needed in lbs per 1,000 sq ft
+Step 3: Split into passes of no more than 12.5 lbs per 1,000 sq ft, spaced 8 weeks apart
+
+Example — lab recommends 80 lbs/1,000 sq ft:
+  Solu-Cal total = 80 ÷ 4 = 20 lbs/1,000 sq ft
+  → 2 applications of 10 lbs each, 8 weeks apart
+  WRONG: "Apply 80 lbs of Solu-Cal" — this is 4× too much
+
+Example — lab recommends 60 lbs/1,000 sq ft:
+  Solu-Cal total = 60 ÷ 4 = 15 lbs/1,000 sq ft
+  → 1 application of 12.5 lbs + 1 application of 2.5 lbs, 8 weeks apart
+  WRONG: "Apply 60 lbs of Solu-Cal"
+
+Example — lab recommends 40 lbs/1,000 sq ft:
+  Solu-Cal total = 40 ÷ 4 = 10 lbs/1,000 sq ft
+  → Single application of 10 lbs/1,000 sq ft
+  WRONG: "Apply 40 lbs of Solu-Cal"
+
+Residential/turf limits: max 12.5 lbs per application · max 3 applications per year · one 50 lb bag covers 4,000 sq ft at full rate
+
+FOR AGRONOMY REPORTS (lab rate in tons per acre):
+Step 1: Read the lab's lime recommendation in tons per acre
+Step 2: Divide by 4 → Solu-Cal tons per acre
+Step 3: Multiply by 2,000 → Solu-Cal lbs per acre
+Step 4: Split if total exceeds 500 lbs/acre per application
+
+Example — lab recommends 0.8 tons/acre:
+  Solu-Cal = 0.8 ÷ 4 = 0.2 tons/acre = 400 lbs/acre → single pass
+  WRONG: "Apply 0.8 tons/acre Solu-Cal" or "Apply 1,600 lbs/acre"
+
+Example — lab recommends 1.3 tons/acre:
+  Solu-Cal = 1.3 ÷ 4 = 0.325 tons/acre = 650 lbs/acre
+  → Split: 500 lbs/acre + 150 lbs/acre
+  WRONG: "Apply 1.3 tons/acre Solu-Cal"
+
+CRITICAL SELF-CHECK: If your Solu-Cal rate equals or nearly equals the lab's traditional lime rate, you have skipped the ÷4 conversion. Recalculate before outputting.`;
+
 // ─── agronomy: crop-specific timing (injected per-request based on detected crop) ──
 
 const AGRONOMY_CROP_TIMING = {
@@ -325,11 +370,13 @@ Get lawn size from customer context. If not provided, assume 5,000 sq ft and sta
 Express all quantities as "X bag(s)" — never as bags per 1,000 sq ft.
 
 LIME RATES AND LANGUAGE — CRITICAL RULES:
-- The maximum Solu-Cal rate is 12.5 lbs per 1,000 sq ft per application.
-- Never state a total lime rate higher than 12.5 lbs per 1,000 sq ft in a single sentence.
-- If more lime is needed, always express it as: "X applications of 12.5 lbs per 1,000 sq ft spaced 8 weeks apart."
+The mandatory ÷4 conversion rule applies — see SOLU-CAL RATE CALCULATION section.
+Step 1: Read the lab's lime recommendation in lbs per 1,000 sq ft
+Step 2: Divide by 4 → total Solu-Cal needed in lbs per 1,000 sq ft
+Step 3: Split into passes of no more than 12.5 lbs per 1,000 sq ft, spaced 8 weeks apart
 - Maximum 3 applications per year. If more than 3 are needed, continue into the following year.
-- One 50 lb bag covers 4,000 sq ft at the raise rate (12.5 lbs/1,000 sq ft).
+- One 50 lb bag covers 4,000 sq ft at 12.5 lbs per 1,000 sq ft.
+- Never output a Solu-Cal rate equal to the lab's traditional lime rate — that means the ÷4 was skipped.
 
 LIME SELECTION — FOLLOW THESE RULES EXACTLY:
 Always recommend Solu-Cal over standard pelletized or pulverized lime for residential customers.
@@ -684,7 +731,7 @@ app.post("/api/analyze", async (req, res) => {
     const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
 
     const fullSystemPrompt = typeof req.body.system === "string"
-      ? req.body.system + (addition || "") + jsonInstruction
+      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + jsonInstruction
       : jsonInstruction;
 
     console.log(`[analyze] System prompt length: ${fullSystemPrompt.length} chars`);
