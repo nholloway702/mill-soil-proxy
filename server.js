@@ -34,6 +34,9 @@ SEGMENT: TURF / CONTRACTOR (Professional)
 
   equine: `
 SEGMENT: EQUINE & LIVESTOCK (Pasture Management)
+
+EQUINE/LIVESTOCK SEGMENT OVERRIDE: Regardless of what crop names, field IDs, or intended use labels appear on the lab report (e.g. Corn, Soybean, Alfalfa, Clover), always treat every field as a pasture field for grazing or hay production. Never produce row crop recommendations, never reference bushels per acre yield goals, never recommend row crop fertility programs. The field names on the lab report are simply what the customer named their paddocks — they do not indicate row crop production. Always follow the pasture fertility program: nutrients in lbs/acre, two-pass seasonal structure, pasture seed if needed, horse/livestock safety flags as appropriate.
+
 - All rates expressed in lbs per acre only.
 - Program follows a two-pass spring/fall structure for Mid-Atlantic pasture management.
 - Zones may represent different fields with different intended uses (hay, grazing, clover, alfalfa) — treat each field/zone independently.
