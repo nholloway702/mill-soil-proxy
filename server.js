@@ -96,38 +96,6 @@ MICRONUTRIENTS — always include if lab recommends them:
 - BORON: "Apply on broadcast basis. Do not over-apply — boron toxicity can occur at excessive rates."
 - MAGNESIUM: "Apply as magnesium oxide, Epsom salts (magnesium sulfate), K-Mag, or Sul-PO-Mag. Do not rely on dolomitic lime alone if immediate correction is needed."
 
-APPLICATION TIMING — build the annual program around these windows:
-
-CORN:
-- Pre-plant (March-April): Lime, broadcast P and K, zinc if needed
-- At-plant: Starter fertilizer (30 lbs N + 20-40 lbs P2O5 + 20-30 lbs K2O as side placement or 2x2)
-- Side-dress (V4-V6, late May-June): Remaining N, sulfur if needed
-
-SOYBEANS:
-- Pre-plant (April-May): Lime, broadcast P and K
-- At-plant: Inoculant, starter P if needed
-- No in-season N needed
-
-WINTER WHEAT:
-- Fall (September-October): 15-20 lbs N/acre, P and K, lime if needed
-- Spring (February-March): Remaining N + sulfur in sulfate form before jointing
-
-TRITICALE:
-- Same as winter wheat timing
-
-SORGHUM:
-- Pre-plant (May): Lime if needed, P and K if needed
-- At-plant: Sulfur and zinc if recommended
-
-SNAP BEANS:
-- Pre-plant: Lime, P and K
-- At-plant: Full N recommendation
-- In-season (2-3 leaf stage): Additional 30-50 lbs N/acre through flowering
-
-ORCHARDGRASS/GRASS HAY:
-- Spring (March-April): Lime if needed, P and K
-- After each cutting: 50 lbs N/acre
-
 TONE AND FORMAT:
 - Write for a farmer audience — professional, direct, agronomically precise.
 - Use proper agronomic terminology: side-dress, broadcast, side-band, pre-plant incorporated, V4-V6, jointing, etc.
@@ -141,6 +109,41 @@ JSON OUTPUT DIFFERENCES FOR AGRONOMY:
 - limeStrategy: use Solu-Cal with tons/acre conversion, include both the traditional lime rate from lab and the Solu-Cal equivalent.
 - executiveSummary: lead with yield goals, most limiting nutrients, and lime status.
 - customerNotes: professional agronomic tone, reference specific fields by name, mention any lab comments about application method.`,
+};
+
+// ─── agronomy: crop-specific timing (injected per-request based on detected crop) ──
+
+const AGRONOMY_CROP_TIMING = {
+  corn: `APPLICATION TIMING FOR CORN:
+- Pre-plant (March-April): Lime, broadcast P and K, zinc if needed
+- At-plant: Starter fertilizer (30 lbs N + 20-40 lbs P2O5 + 20-30 lbs K2O as side placement or 2x2)
+- Side-dress (V4-V6, late May-June): Remaining N, sulfur if needed`,
+
+  soybean: `APPLICATION TIMING FOR SOYBEANS:
+- Pre-plant (April-May): Lime, broadcast P and K
+- At-plant: Inoculant, starter P if needed
+- No in-season N needed`,
+
+  wheat: `APPLICATION TIMING FOR WINTER WHEAT:
+- Fall (September-October): 15-20 lbs N/acre, P and K, lime if needed
+- Spring (February-March): Remaining N + sulfur in sulfate form before jointing`,
+
+  triticale: `APPLICATION TIMING FOR TRITICALE:
+- Fall (September-October): 15-20 lbs N/acre, P and K, lime if needed
+- Spring (February-March): Remaining N + sulfur in sulfate form before jointing`,
+
+  sorghum: `APPLICATION TIMING FOR SORGHUM:
+- Pre-plant (May): Lime if needed, P and K if needed
+- At-plant: Sulfur and zinc if recommended`,
+
+  snap_bean: `APPLICATION TIMING FOR SNAP BEANS:
+- Pre-plant: Lime, P and K
+- At-plant: Full N recommendation
+- In-season (2-3 leaf stage): Additional 30-50 lbs N/acre through flowering`,
+
+  hay: `APPLICATION TIMING FOR ORCHARDGRASS/GRASS HAY:
+- Spring (March-April): Lime if needed, P and K
+- After each cutting: 50 lbs N/acre`,
 };
 
 // ─── residential: Lawn Care Guide decision tree ───────────────────────────────
@@ -476,6 +479,18 @@ function extractSegment(body) {
   return null;
 }
 
+function extractCrop(body) {
+  const text = extractContextText(body);
+  if (/triticale/i.test(text))                              return "triticale";
+  if (/snap\s*bean/i.test(text))                            return "snap_bean";
+  if (/sorghum/i.test(text))                                return "sorghum";
+  if (/soybean|soy\s*bean/i.test(text))                     return "soybean";
+  if (/wheat/i.test(text))                                  return "wheat";
+  if (/corn|maize/i.test(text))                             return "corn";
+  if (/orchardgrass|orchard\s*grass|hay|grass\s*hay/i.test(text)) return "hay";
+  return null;
+}
+
 function extractContextText(body) {
   try {
     const content = body?.messages?.[0]?.content;
@@ -517,7 +532,15 @@ function buildSystemAddition(segment, body) {
     return instructions + EQUINE_PASTURE_PROGRAM + buildCatalogText([...limeProducts, ...coreProducts]);
   }
 
-  // agronomy: segment instructions only, no catalog
+  // agronomy: segment instructions + crop-specific timing only (no catalog)
+  if (segment === "agronomy") {
+    const crop = extractCrop(body);
+    const timing = crop && AGRONOMY_CROP_TIMING[crop]
+      ? `\n\n${AGRONOMY_CROP_TIMING[crop]}`
+      : "\n\nAPPLICATION TIMING: Use crop-specific pre-plant, at-plant, and side-dress timing appropriate for the intended crop identified in the lab report.";
+    return instructions + timing;
+  }
+
   return instructions;
 }
 
@@ -529,10 +552,10 @@ app.post("/api/analyze", async (req, res) => {
     return res.status(500).json({ error: "ANTHROPIC_API_KEY is not set on the server." });
   }
 
-  console.log(`[analyze] Request received — segment: ${extractSegment(req.body) ?? "unknown"}`);
+  const segment = extractSegment(req.body);
+  console.log(`[analyze] Request received — segment: ${segment ?? "unknown"}`);
 
   try {
-    const segment = extractSegment(req.body);
     const addition = buildSystemAddition(segment, req.body);
 
     const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
@@ -541,6 +564,16 @@ app.post("/api/analyze", async (req, res) => {
       ? req.body.system + (addition || "") + jsonInstruction
       : jsonInstruction;
 
+    console.log(`[analyze] System prompt length: ${fullSystemPrompt.length} chars`);
+    if (fullSystemPrompt.length > 50000) {
+      console.warn(`[analyze] WARNING: System prompt exceeds 50,000 chars (${fullSystemPrompt.length})`);
+    }
+
+    // Agronomy reports can have many zones — give them more room
+    const maxTokens = segment === "agronomy" ? 8000 : 6000;
+
+    // Only forward fields Anthropic's API accepts — never spread req.body blindly.
+    // Spreading req.body would forward unknown fields like selectedStore, causing a 400.
     const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -550,14 +583,27 @@ app.post("/api/analyze", async (req, res) => {
         "anthropic-beta": "pdfs-2024-09-25",
       },
       body: JSON.stringify({
-        ...req.body,
-        stream: false,
+        model: req.body.model,
+        max_tokens: maxTokens,
         system: fullSystemPrompt,
-        max_tokens: 6000,
+        messages: req.body.messages,
+        stream: false,
       }),
     });
 
+    // Always read the full body first so we can log it on error
     const envelopeText = await anthropicResponse.text();
+
+    if (!anthropicResponse.ok) {
+      console.error(`[analyze] Anthropic API error ${anthropicResponse.status}:`, envelopeText.substring(0, 2000));
+      let errData = {};
+      try { errData = JSON.parse(envelopeText); } catch {}
+      return res.status(anthropicResponse.status).json({
+        error: errData?.error?.message ?? `Anthropic API error ${anthropicResponse.status}`,
+        detail: errData,
+      });
+    }
+
     let data;
     try {
       data = JSON.parse(envelopeText);
@@ -571,7 +617,7 @@ app.post("/api/analyze", async (req, res) => {
     console.log("[analyze] Raw response length:", rawText.length);
     console.log("[analyze] Response preview:", rawText.substring(0, 500));
 
-    if (anthropicResponse.ok && rawText) {
+    if (rawText) {
       try {
         JSON.parse(rawText.replace(/```json|```/g, "").trim());
       } catch (jsonErr) {
