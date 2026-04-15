@@ -125,11 +125,39 @@ TONE AND FORMAT:
 - Customer notes should read like advice from a trusted agronomist, not a retail store.
 
 JSON OUTPUT DIFFERENCES FOR AGRONOMY:
-- annualProgram timing entries should follow the crop timing windows above, not generic seasonal names.
-- productList for agronomy: list nutrients as lbs/acre (N, P₂O₅, K₂O, etc.) — do NOT recommend specific bagged fertilizer products.
-- limeStrategy: use Solu-Cal with tons/acre conversion, include both the traditional lime rate from lab and the Solu-Cal equivalent.
-- executiveSummary: lead with yield goals, most limiting nutrients, and lime status.
-- customerNotes: professional agronomic tone, reference specific fields by name, mention any lab comments about application method.`,
+
+annualProgram — produce one timing group per crop stage (Pre-plant, At-plant, Side-dress, etc.). Each field gets its OWN set of application entries — do not group all fields into a single entry. Each application object must include all of these fields:
+  - zone: the field/sample name exactly as it appears in the lab report
+  - timing: the crop stage name (e.g. "Pre-plant — March/April")
+  - product: nutrient and rate together (e.g. "Nitrogen (N) — 265 lbs/acre" or "Solu-Cal Hi Cal — 500 lbs/acre")
+  - rate: the numeric rate with units repeated (e.g. "265 lbs/acre")
+  - method: the application method (e.g. "Broadcast and incorporate before planting", "2x2 in-furrow starter", "UAN coulter injection at V4-V6", "Side-band near crop row")
+  - notes: any lab-specific comments for this field (e.g. "Lab recommends 20-40 lbs P2O5 as side placement", "Apply sulfur in sulfate form — thiosulfate does not count", "Do not over-apply boron — toxicity risk at excessive rates"). Use empty string if none.
+
+productList for agronomy: list nutrients as lbs/acre (N, P₂O₅, K₂O, etc.) — do NOT recommend specific bagged fertilizer products.
+
+limeStrategy: use Solu-Cal with tons/acre conversion, include both the traditional lime rate from lab and the Solu-Cal equivalent.
+
+executiveSummary: lead with yield goals, most limiting nutrients, and lime status.
+
+customerNotes: professional agronomic tone, reference specific fields by name, mention any lab comments about application method.
+
+farmSummaryTable — include this as a top-level field in the JSON response. One row per field/zone, reading values directly from the lab's Soil Fertility Recommendations table:
+  headers: ["Field", "Crop", "Yield Goal", "pH", "Lime (tons/acre)", "N (lbs/acre)", "P2O5 (lbs/acre)", "K2O (lbs/acre)", "Mg (lbs/acre)", "S (lbs/acre)", "Zn (lbs/acre)", "B (lbs/acre)", "Notes"]
+  Each row object:
+  - field: field/sample name from lab
+  - crop: intended crop from lab recommendations table
+  - yieldGoal: yield goal string from lab recommendations table
+  - ph: soil pH as a number (read from the Soil pH column on the RIGHT side of the analysis table)
+  - lime: lime recommendation in tons/acre as a number (0 if none)
+  - n: N recommendation in lbs/acre as a number
+  - p2o5: P2O5 recommendation in lbs/acre as a number
+  - k2o: K2O recommendation in lbs/acre as a number
+  - mg: Mg recommendation in lbs/acre as a number (0 if none)
+  - s: S recommendation in lbs/acre as a number (0 if none)
+  - zn: Zn recommendation in lbs/acre as a number (0 if none)
+  - b: B recommendation in lbs/acre as a number (0 if none)
+  - notes: any lab application comments for this field (side-band placement, sulfur form, boron caution, etc.)`,
 };
 
 // ─── agronomy: crop-specific timing (injected per-request based on detected crop) ──
