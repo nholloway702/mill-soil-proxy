@@ -34,12 +34,12 @@ SEGMENT: TURF / CONTRACTOR (Professional)
 
   equine: `
 SEGMENT: EQUINE & LIVESTOCK (Pasture Management)
-- Focus on forage quality, stand density, and weed suppression.
-- All rates in lbs per acre.
-- Program should follow a spring and fall structure typical for Mid-Atlantic pasture management.
-- Note any products or nutrients that could be harmful to horses or livestock at high rates.
-- Customer notes should acknowledge the connection between pasture quality and animal health.
-- No Mill catalog products are available for this segment yet. Make agronomically sound recommendations and note "consult Mill staff for product and pricing" for every product entry.`,
+- All rates expressed in lbs per acre only.
+- Program follows a two-pass spring/fall structure for Mid-Atlantic pasture management.
+- Zones may represent different fields with different intended uses (hay, grazing, clover, alfalfa) — treat each field/zone independently.
+- Always check and flag any horse safety concerns in the findings (high K, elevated nitrates, elevated sodium).
+- Customer notes should acknowledge the connection between soil health and animal health, and encourage annual soil testing.
+- Warm but professional tone — this customer cares deeply about their animals.`,
 
   agronomy: `
 SEGMENT: AGRONOMY (Farm / Row Crop)
@@ -163,6 +163,106 @@ const RESIDENTIAL_CORE_SKUS = new Set([
   "115130",   // Trimec Granular — broadleaf spot treatment add-on
 ]);
 
+// ─── equine: pasture program ──────────────────────────────────────────────────
+
+const EQUINE_PASTURE_PROGRAM = `
+
+Only recommend products from the catalog at the bottom of these instructions. Do not reference or suggest any products outside this list. Always include the exact product name AND SKU in every recommendation. Only use "consult Mill staff for product and pricing" if a genuinely needed product is not in the catalog.
+
+MID-ATLANTIC PASTURE FERTILITY PROGRAM — EQUINE & LIVESTOCK:
+
+NITROGEN RECOMMENDATIONS:
+- Use the lab ENR (Estimated Nitrogen Release) value to determine actual N needed: N to apply = N target − ENR.
+- Grass pastures: target 100–150 lbs N/acre/year, split equally between spring and fall passes.
+- Legume/clover mixes: reduce to 20–40 lbs N/acre max — legumes fix their own nitrogen. Excess N will suppress clover.
+- Alfalfa fields: do NOT apply nitrogen — alfalfa fully fixes its own N. Note this in the recommendation.
+- Spring N: apply March–April when grass begins active growth.
+- Fall N: apply August–September for fall flush and winter hardiness.
+
+PHOSPHORUS RECOMMENDATIONS:
+- Very Low (VL) → apply full lab recommendation (lbs P2O5/acre).
+- Low (L) → apply 75% of lab recommendation.
+- Medium (M) → apply maintenance rate only: 20–30 lbs P2O5/acre.
+- High (H) or Very High (VH) → do not apply phosphorus. Note excess in findings.
+
+POTASSIUM RECOMMENDATIONS:
+- Very Low (VL) → apply full lab recommendation (lbs K2O/acre).
+- Low (L) → apply 75% of lab recommendation.
+- Medium (M) → apply maintenance rate: 40–60 lbs K2O/acre.
+- High (H) or Very High (VH) → do not apply potassium. Note excess in findings.
+- On horse pastures, always prefer 0-0-50 Sulfate of Potash (SKU 1154218) over 0-0-60 Muriate of Potash (SKU 115123) — lower salt index and gentler on forage quality.
+
+HORSE SAFETY FLAGS — always check and include in key findings when applicable:
+- Potassium Very High (VH) on horse pastures → flag: "Note: Very high potassium levels have been associated with HYPP in horses with that genetic condition. Monitor horses grazing this field, particularly Quarter Horses or their crosses."
+- Elevated Nitrate Nitrogen → flag: "Note: Elevated nitrate levels can be toxic to horses and livestock. Do not graze or feed hay from this field until nitrates are tested at safe levels."
+- Elevated Sodium (Na) → flag: "Note: Elevated sodium levels detected. Ensure fresh water is always available."
+- Always include in customer notes: "Consult your veterinarian before making significant changes to pasture management if horses show signs of sensitivity."
+
+LIME FOR PASTURE:
+- Target pH for horse/grass pastures: 6.2–6.8.
+- Target pH for alfalfa: 6.8–7.0.
+- pH below target → recommend Solu-Cal at 550 lbs/acre to raise pH (use Solu-Cal Magnesium if Mg is also low).
+- pH at or above 6.5 for grass pastures → no lime needed; note pH is adequate.
+- Express all lime rates in lbs/acre.
+
+SOLU-CAL SELECTION FOR PASTURE:
+- Low pH + Mg below 80 ppm or %Mg below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- Low pH + Mg adequate → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
+In the limeStrategy field: name the product and SKU, state the per-acre rate (550 lbs/acre to raise, 260 lbs/acre to maintain), and calculate total product needed for each field's acreage.
+
+FERTILIZER PRODUCT SELECTION:
+- Balanced N-P-K needs → 19-19-19 (SKU 115156) or 10-10-10 (SKU 115151)
+- Nitrogen top-dress only → 32-0-6 30% XCU (SKU 115952) for steady release, or 46-0-0 Urea (SKU 115158) for experienced operators who want rapid green-up
+- Phosphorus correction → 11-52-0 Monoammonium Phosphate (SKU 1152) or 0-45-0 Triple Superphosphate (SKU 115173)
+- Potassium correction → 0-0-50 Sulfate of Potash (SKU 1154218) preferred on horse pastures; 0-0-60 Muriate of Potash (SKU 115123) acceptable for cattle/livestock-only fields
+
+PASTURE SEED RECOMMENDATIONS:
+- Thin stand, renovation, or overseeding needed → recommend from pasture catalog:
+  - General horse/livestock → Horse and Livestock Pasture Mix (SKU 36170): endophyte-free; tall fescue, orchardgrass, and clover; safe for horses.
+  - High yield / hay production → Duragraze Pasture Mix (SKU 36171) or Supreme Pasture Mix (SKU 36172).
+  - New seeding rate: 25–30 lbs/acre. Overseeding rate: 15–20 lbs/acre.
+- If no stand issues mentioned → do not recommend seed unless soil data or context suggests it.
+
+WEED CONTROL:
+- Broadleaf weeds mentioned → recommend an appropriate herbicide and always note: "Always verify the herbicide label for livestock grazing restrictions and observe all required withdrawal periods before grazing treated pastures."
+- Do not recommend pre-emergent herbicides on actively grazed pastures without a grazing withdrawal note.
+
+SEASONAL PROGRAM STRUCTURE — TWO PASSES:
+Pass 1 — Early Spring (March–April):
+  Lime (if needed) + spring N application + P/K corrections based on soil data + seeding if stand renovation is planned
+
+Pass 2 — Late Summer / Early Fall (August–September):
+  Fall N top-dress + any remaining P/K corrections + overseeding if needed + lime follow-up if pH still below target
+
+PRODUCT QUANTITY CALCULATIONS:
+- Express all quantities in lbs/acre for single-acre rates, plus total product needed for each field's stated acreage.
+- If acreage is not provided, state the assumption.
+- For bagged products (50 lb bags): calculate total lbs needed, divide by 50, round up to nearest whole bag.
+- Express as: "X lbs/acre — X bags (50 lb) total for X acres."
+
+THE MILL — PASTURE PRODUCT CATALOG:
+
+`;
+
+// ─── equine: catalog SKUs ─────────────────────────────────────────────────────
+
+const EQUINE_CORE_SKUS = new Set([
+  // ── granular fertilizers ──────────────────────────────────────────────────
+  "115156",   // 19-19-19 — balanced NPK for pasture
+  "115151",   // 10-10-10 — balanced NPK, lighter analysis
+  "115952",   // 32-0-6 30% XCU — nitrogen top-dress
+  "115158",   // 46-0-0 Urea — high-N for experienced operators
+  "1152",     // 11-52-0 MAP — phosphorus correction
+  "115173",   // 0-45-0 Triple Superphosphate — phosphorus correction
+  "115123",   // 0-0-60 Muriate of Potash — potassium (cattle/livestock fields)
+  "1154218",  // 0-0-50 Sulfate of Potash — potassium preferred for horse pastures
+  // ── pasture seed ──────────────────────────────────────────────────────────
+  "36170",    // Horse and Livestock Pasture Mix — general horse/livestock
+  "36171",    // Duragraze Pasture Mix — high yield / hay
+  "36172",    // Supreme Pasture Mix — premium hay and grazing
+]);
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 function extractSegment(body) {
@@ -218,7 +318,13 @@ function buildSystemAddition(segment, body) {
     return instructions + TURF_CATALOG_PREAMBLE + buildCatalogText(CATALOG);
   }
 
-  // equine and agronomy: no catalog injection
+  if (segment === "equine") {
+    const limeProducts = CATALOG.filter(p => p.category === "Lime & Soil Conditioners");
+    const coreProducts = CATALOG.filter(p => EQUINE_CORE_SKUS.has(p.sku));
+    return instructions + EQUINE_PASTURE_PROGRAM + buildCatalogText([...limeProducts, ...coreProducts]);
+  }
+
+  // agronomy: segment instructions only, no catalog
   return instructions;
 }
 
