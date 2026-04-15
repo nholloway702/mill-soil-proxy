@@ -117,12 +117,77 @@ MICRONUTRIENTS — always include if lab recommends them:
 - BORON: "Apply on broadcast basis. Do not over-apply — boron toxicity can occur at excessive rates."
 - MAGNESIUM: "Apply as magnesium oxide, Epsom salts (magnesium sulfate), K-Mag, or Sul-PO-Mag. Do not rely on dolomitic lime alone if immediate correction is needed."
 
+CATION RATIO AND BALANCE ANALYSIS:
+
+For every field, calculate and evaluate the following using values from the soil analysis table:
+
+CA:MG RATIO (Ca ppm / Mg ppm):
+- Ideal range: 5:1 to 8:1
+- Below 5:1 → Flag warning: "Excess magnesium relative to calcium. Mg saturation is suppressing Ca uptake. Avoid dolomitic lime — use high calcium lime only. Consider gypsum to add Ca without raising pH further."
+- Above 8:1 → Flag warning: "Calcium dominance detected. Low Mg relative to Ca may limit magnesium availability. Consider Mg supplementation if lab does not already recommend it."
+- Within 5:1–8:1 → Note: "Ca:Mg ratio is within optimal balance."
+
+K:MG RATIO (K ppm / Mg ppm):
+- Ideal range: 0.2:1 to 0.3:1
+- Above 0.5:1 → Flag warning: "Elevated potassium relative to magnesium. High K suppresses Mg uptake and can increase lodging risk in corn. Apply Mg as recommended and avoid additional K beyond lab recommendation."
+- Below 0.2:1 → Flag warning: "Low K relative to Mg. Potassium may be limiting even if absolute K levels appear adequate. Prioritize K application."
+- Within 0.2:1–0.5:1 → Note: "K:Mg ratio is balanced."
+
+BASE SATURATION EVALUATION (use %Ca, %Mg, %K from the analysis table):
+%Ca target 65–80%:
+- Below 65% → Flag warning: "Calcium saturation is low. Prioritize high-calcium lime to improve Ca availability and soil structure."
+- Above 80% → Flag warning: "High calcium saturation. Monitor for induced Mg or K deficiency."
+%Mg target 10–20%:
+- Below 10% → Flag warning: "Magnesium saturation is low. Supplement with Mg even if ppm level appears medium."
+- Above 20% → Flag warning: "High magnesium saturation. Excess Mg tightens soil, reduces aeration, and competes with K and Ca uptake. Use calcitic not dolomitic lime."
+%K target 2–5%:
+- Below 2% → Flag critical: "Potassium saturation is critically low. Apply full K recommendation and consider split application."
+- Above 5% → Flag warning: "High K saturation. Excess K suppresses Mg and Ca uptake. Do not apply additional K beyond what is needed."
+%H (hydrogen/acidity):
+- Above 15% → Flag warning: "High acidity saturation indicates significant lime need. pH correction is the highest priority for this field."
+- Above 25% → Flag critical: "Severe acidity. This field has very high lime demand. Multiple Solu-Cal applications may be needed."
+
+CEC EVALUATION:
+- Below 8 meq/100g → Flag warning: "Low CEC soil — limited nutrient holding capacity. Split nitrogen into at least 3 applications to reduce leaching losses. Avoid single large N applications. Consider starter + side-dress + late-season foliar approach."
+- 8–15 meq/100g → Note: "Moderate CEC — standard split N program appropriate."
+- Above 15 meq/100g → Note: "High CEC soil — good nutrient retention. Can support larger single applications if needed."
+
+ORGANIC MATTER EVALUATION:
+- Below 2.5% → Flag warning: "Low organic matter — reduced nitrogen efficiency, poor water holding capacity, and lower biological activity. Consider cover crops, reduced tillage, or manure applications to build OM over time."
+- 2.5–4% → Note: "Adequate organic matter for Mid-Atlantic soils."
+- Above 4% → Note: "Good organic matter — strong nitrogen mineralization potential. ENR credit from lab should be applied to reduce synthetic N inputs."
+- Always reference ENR: "Soil organic matter will release approximately [ENR] lbs N/acre this season. This has been credited in the lab's nitrogen recommendation."
+
+AGRONOMIC RISK FLAGS:
+
+Evaluate each field for the following and add relevant items to keyFindings with appropriate severity:
+
+HIGH P + LOW PH: If Phosphorus is rated H or VH AND pH < 6.0 → critical: "High soil phosphorus is largely unavailable at this pH. Phosphorus availability is severely limited below pH 6.0. Lime correction must be the first priority — applied phosphorus will be wasted until pH is corrected."
+
+LOW CEC + HIGH N RATE: If CEC < 8 AND lab N rec > 150 lbs/acre → warning: "Low CEC combined with high nitrogen rate creates significant leaching risk. Split N into minimum 3 passes. Consider slow-release or stabilized nitrogen products to improve efficiency."
+
+SULFUR DEFICIENCY: If lab S > 0 lbs/acre → warning: "Sulfur deficiency detected. Mid-Atlantic soils have declining sulfur levels due to reduced atmospheric deposition. Apply sulfur in sulfate form only — elemental sulfur and thiosulfate are not immediately plant available." / If lab S = 0 but OM < 2.5% and crop is corn or wheat → warning: "Low organic matter fields are at elevated sulfur deficiency risk even without a lab recommendation. Consider 10–15 lbs S/acre as ammonium sulfate as insurance."
+
+BORON DEFICIENCY: If lab Boron is VL or L → warning: "Low boron detected. Boron is critical for corn pollination and kernel set. Apply as broadcast at [lab B rec] lbs/acre. Do not side-band boron — concentrated boron near seed can be toxic."
+
+ZINC DEFICIENCY: If lab Zinc is VL or L → warning: "Low zinc — critical for corn growth especially in cold wet springs. Side-band zinc near the seed row for maximum efficiency. Do not broadcast — zinc has very low soil mobility."
+
+HIGH MANGANESE: If Mn ppm > 200 → warning: "Very high manganese. Excessive Mn can be toxic to crops especially at low pH. Raising pH through lime application will reduce Mn availability and toxicity risk."
+
+LOW OM + HIGH YIELD GOAL: If OM < 2.5% AND yield goal > 200 bu/acre corn or > 50 bu/acre soybeans → warning: "Low organic matter combined with high yield goal increases risk of nitrogen inefficiency and moisture stress. Ensure adequate N split and consider in-season monitoring."
+
+LOW CA SATURATION: If %Ca < 60% → critical: "Low calcium saturation — calcium deficiency risk. Prioritize high-calcium lime application. Low Ca affects soil structure, root development, and crop standability."
+
+HIGH SODIUM: If Na ppm > 50 or %Na > 2% → warning: "Elevated sodium detected. High Na disperses soil aggregates, reduces water infiltration, and can cause crusting. Gypsum (calcium sulfate) application can help displace Na and improve soil structure."
+
 TONE AND FORMAT:
 - Write for a farmer audience — professional, direct, agronomically precise.
 - Use proper agronomic terminology: side-dress, broadcast, side-band, pre-plant incorporated, V4-V6, jointing, etc.
 - Reference yield goals directly: "To achieve your 300 bu/acre yield goal on Field 1..."
 - Be concise in customer notes — farmers want facts and recommendations, not explanation.
 - Customer notes should read like advice from a trusted agronomist, not a retail store.
+- In executiveSummary, lead with the most critical soil chemistry issue identified across all fields.
+- In customerNotes, reference specific ratio imbalances using agronomic language appropriate for a farmer.
 
 JSON OUTPUT DIFFERENCES FOR AGRONOMY:
 
@@ -141,6 +206,15 @@ limeStrategy: use Solu-Cal with tons/acre conversion, include both the tradition
 executiveSummary: lead with yield goals, most limiting nutrients, and lime status.
 
 customerNotes: professional agronomic tone, reference specific fields by name, mention any lab comments about application method.
+
+ratioAnalysis — include this as a top-level field in the JSON response. One object per field/zone:
+  Each object:
+  - field: field/sample name
+  - caToMg: number (Ca ppm / Mg ppm, rounded to 1 decimal)
+  - kToMg: number (K ppm / Mg ppm, rounded to 2 decimals)
+  - cecClass: "low" | "moderate" | "high"
+  - omClass: "low" | "adequate" | "good"
+  - flags: array of strings — one entry per ratio or risk flag triggered for this field (use the flag text from the rules above, concise form)
 
 farmSummaryTable — include this as a top-level field in the JSON response. One row per field/zone, reading values directly from the lab's Soil Fertility Recommendations table:
   headers: ["Field", "Crop", "Yield Goal", "pH", "Lime (tons/acre)", "N (lbs/acre)", "P2O5 (lbs/acre)", "K2O (lbs/acre)", "Mg (lbs/acre)", "S (lbs/acre)", "Zn (lbs/acre)", "B (lbs/acre)", "Notes"]
