@@ -268,11 +268,27 @@ SOLU-CAL SELECTION FOR PASTURE:
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 In the limeStrategy field: name the product and SKU, state the per-acre rate (550 lbs/acre to raise, 260 lbs/acre to maintain), and calculate total bags needed for each field's acreage.
 
-FERTILIZER PRODUCT SELECTION:
-- Balanced N-P-K needs → 19-19-19 (SKU 115156) or 10-10-10 (SKU 115151)
-- Nitrogen top-dress → 32-0-6 30% XCU (SKU 115952) for steady release; 46-0-0 Urea (SKU 115158) only for cattle pastures managed by experienced operators — never on horse, sheep, or goat pastures
-- Phosphorus correction → 11-52-0 MAP (SKU 1152) or 0-45-0 Triple Superphosphate (SKU 115173)
-- Potassium correction → 0-0-50 Sulfate of Potash (SKU 1154218) when horses are present or mixed; 0-0-60 Muriate of Potash (SKU 115123) for cattle-only fields
+FERTILIZER RECOMMENDATIONS — NUTRIENTS ONLY (no specific products):
+For the equine/livestock segment, express ALL fertility recommendations as lbs of nutrient per acre, not as specific fertilizer products or SKUs.
+
+In the annualProgram entries, use this format:
+- product: "Nitrogen (N)" or "Phosphate (P2O5)" or "Potash (K2O)" or "Sulfur (S)" or "Magnesium (Mg)"
+- rate: "X lbs per acre"
+- purpose: agronomic explanation based on the soil data (e.g. "Soil nitrogen is below target for grass pasture; ENR of X lbs/acre leaves X lbs/acre to apply")
+
+In the productList entries, use this format:
+- product: "Nitrogen (N) — Spring Application" (or Fall, or similar label)
+- type: "Nutrient Recommendation"
+- estimatedQty: "X lbs/acre" (plus total lbs for stated acreage if acreage is known)
+- purpose: brief agronomic explanation
+
+Always add this note in customerNotes:
+"Consult your Mill agronomist or staff to select the right fertilizer product to deliver these nutrient recommendations based on your operation, budget, and application equipment."
+
+Also include this note in limeStrategy if fertilizer is also needed:
+"Fertilizer product selection for this pasture program should be confirmed with Mill staff based on your equipment and budget."
+
+Do NOT recommend specific fertilizer products, brand names, analysis numbers (e.g. 19-19-19, 32-0-6), or fertilizer SKUs for this segment. Lime and seed products remain as specific Mill products with SKUs.
 
 PASTURE SEED RECOMMENDATIONS:
 
@@ -340,15 +356,8 @@ THE MILL — PASTURE PRODUCT CATALOG:
 // ─── equine: catalog SKUs ─────────────────────────────────────────────────────
 
 const EQUINE_CORE_SKUS = new Set([
-  // ── granular fertilizers ──────────────────────────────────────────────────
-  "115156",   // 19-19-19 — balanced NPK for pasture
-  "115151",   // 10-10-10 — balanced NPK, lighter analysis
-  "115952",   // 32-0-6 30% XCU — nitrogen top-dress
-  "115158",   // 46-0-0 Urea — high-N for experienced operators
-  "1152",     // 11-52-0 MAP — phosphorus correction
-  "115173",   // 0-45-0 Triple Superphosphate — phosphorus correction
-  "115123",   // 0-0-60 Muriate of Potash — potassium (cattle/livestock fields)
-  "1154218",  // 0-0-50 Sulfate of Potash — potassium preferred for horse pastures
+  // Fertilizer SKUs intentionally excluded — equine segment uses nutrient
+  // recommendations (lbs/acre) instead of specific products. Consult Mill staff.
   // ── pasture seed ──────────────────────────────────────────────────────────
   "36170",    // Horse and Livestock Pasture Mix — general horse/livestock
   "36171",    // Duragraze Pasture Mix — high yield / hay
@@ -434,9 +443,11 @@ app.post("/api/analyze", async (req, res) => {
     const segment = extractSegment(req.body);
     const addition = buildSystemAddition(segment, req.body);
 
-    const fullSystemPrompt = typeof req.body.system === "string" && addition
-      ? req.body.system + addition
-      : req.body.system;
+    const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
+
+    const fullSystemPrompt = typeof req.body.system === "string"
+      ? req.body.system + (addition || "") + jsonInstruction
+      : jsonInstruction;
 
     const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -450,10 +461,33 @@ app.post("/api/analyze", async (req, res) => {
         ...req.body,
         stream: false,
         system: fullSystemPrompt,
+        max_tokens: 6000,
       }),
     });
 
-    const data = await anthropicResponse.json();
+    const envelopeText = await anthropicResponse.text();
+    let data;
+    try {
+      data = JSON.parse(envelopeText);
+    } catch (parseErr) {
+      console.error("[analyze] Failed to parse Anthropic API envelope:", parseErr.message);
+      console.error("[analyze] Envelope preview:", envelopeText.substring(0, 500));
+      return res.status(502).json({ error: "Bad response from AI service" });
+    }
+
+    const rawText = data.content?.find(b => b.type === "text")?.text ?? "";
+    console.log("[analyze] Raw response length:", rawText.length);
+    console.log("[analyze] Response preview:", rawText.substring(0, 500));
+
+    if (anthropicResponse.ok && rawText) {
+      try {
+        JSON.parse(rawText.replace(/```json|```/g, "").trim());
+      } catch (jsonErr) {
+        console.error("[analyze] AI returned invalid JSON:", jsonErr.message);
+        return res.status(422).json({ error: "AI returned invalid JSON", raw: rawText.substring(0, 1000) });
+      }
+    }
+
     console.log(`[analyze] Sending response — status ${anthropicResponse.status}`);
     res.status(anthropicResponse.status).json(data);
   } catch (err) {
