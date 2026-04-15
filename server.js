@@ -275,11 +275,46 @@ FERTILIZER PRODUCT SELECTION:
 - Potassium correction → 0-0-50 Sulfate of Potash (SKU 1154218) when horses are present or mixed; 0-0-60 Muriate of Potash (SKU 115123) for cattle-only fields
 
 PASTURE SEED RECOMMENDATIONS:
-- Thin stand, renovation, or overseeding needed → recommend from pasture catalog:
-  - General horse/livestock → Horse and Livestock Pasture Mix (SKU 36170): endophyte-free; safe for horses, orchardgrass and clover base.
-  - High yield / hay production → Duragraze Pasture Mix (SKU 36171) or Supreme Pasture Mix (SKU 36172).
-  - New seeding rate: 25–30 lbs/acre. Overseeding rate: 15–20 lbs/acre.
-- If no stand issues mentioned → do not recommend seed unless context or soil data suggests it.
+
+WHEN TO RECOMMEND SEED:
+- Customer mentions thin stand, renovation, new pasture, or bare areas in pasture_condition → always recommend seed.
+- pasture_condition says established but thin → use overseeding rate (15–20 lbs/acre).
+- pasture_condition says new pasture or renovation → use new seeding rate (25–30 lbs/acre).
+- pasture_condition says good established stand with no issues → do not recommend seed unless soil data suggests otherwise.
+
+SEED MIX DECISION TREE — choose the best match:
+
+HORSE AND LIVESTOCK PASTURE MIX (SKU 36170) — 50 lb bag
+Contains: 40% Olathe Orchardgrass, 40% Inavale Orchardgrass, 15% Hostyn Festulolium, 5% Balin Kentucky Bluegrass
+Recommend when:
+- Primary livestock is horses, or forage palatability is the top priority
+- Customer wants soft-leaf, highly palatable forage for full-season grazing
+- Orchardgrass is preferred or requested
+- General horse and livestock operations where forage quality matters most
+Selling points: highly palatable soft leaves, durable and hardy, fast establishment, full-season grazing
+
+DURAGRAZE PASTURE MIX (SKU 36171) — 50 lb bag
+Contains: 75% Fojtan Festulolium, 20% Hostyn Festulolium, 5% Balin Kentucky Bluegrass
+Recommend when:
+- Maximum persistence and season length (March–November) is the priority
+- Hot, dry summers are a concern and forage must keep producing
+- Customer has cattle, sheep, goats, or horses under tough grazing conditions
+- High-volume forage production is needed
+Selling points: most persistent mix The Mill offers, handles hot dry summers while still producing, works for all livestock species
+
+SUPREME PASTURE MIX (SKU 36172) — 50 lb bag
+Contains: 40% Fojtan Festulolium, 30% Echelon Orchardgrass, 25% Hostyn Festulolium, 5% Balin Kentucky Bluegrass
+Recommend when:
+- Customer has mixed livestock (cattle, sheep, goats, and horses together)
+- A premium blend balancing Festulolium persistence and Orchardgrass palatability is desired
+- High-quality sod with weed suppression is a priority
+Selling points: most resilient and productive blend, palatable for all livestock species, Balin Kentucky Bluegrass minimizes weed pressure
+
+SEEDING RATE AND QUANTITY CALCULATION:
+- New pasture seeding: 25–30 lbs/acre → use 27.5 lbs/acre for quantity math
+- Overseeding into existing stand: 15–20 lbs/acre → use 17.5 lbs/acre for quantity math
+- Total bags needed = (acreage × rate) ÷ 50, round up to nearest whole bag
+- Express as: "X bags (50 lb) for X acres at X lbs/acre"
 
 WEED CONTROL:
 - Broadleaf weeds mentioned → recommend an appropriate herbicide and always note: "Always verify the herbicide label for livestock grazing restrictions and observe all required withdrawal periods before grazing treated pastures."
