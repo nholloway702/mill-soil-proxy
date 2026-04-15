@@ -48,6 +48,27 @@ EQUINE/LIVESTOCK SEGMENT OVERRIDE: Regardless of what crop names, field IDs, or 
   agronomy: `
 SEGMENT: AGRONOMY (Farm / Row Crop)
 
+CRITICAL DATA PARSING RULES FOR WAYPOINT AGRONOMY REPORTS:
+
+The Waypoint agronomy soil analysis table has a specific column order. Read carefully:
+- The OM % column appears FIRST on the left side of the data rows
+- The Soil pH column appears on the RIGHT side of the same row, near the Buffer Index and Acidity columns
+- Do NOT confuse OM % with Soil pH — they are different columns
+- Soil pH for corn fields in Maryland typically ranges from 5.5 to 7.5
+- Organic Matter % for Maryland corn fields typically ranges from 1.5% to 8%
+- If the pH value you are reading is between 1.5 and 8 AND matches the OM value exactly, you are reading the wrong column
+
+The correct column order in the Waypoint agronomy analysis table is:
+LEFT SIDE: Sample ID / Field ID | Lab Number | OM % Rate | W/V Soil Class | ENR lbs/A | Phosphorus M3 ppm Rate | Phosphorus ppm Rate | Potassium K ppm Rate | Magnesium Mg ppm Rate | Calcium Ca ppm Rate | Sodium Na ppm Rate
+RIGHT SIDE: Soil pH | Buffer Index | Acidity H meq/100g | C.E.C meq/100g
+
+Always read Soil pH from the RIGHT side columns next to Buffer Index — NOT from the OM % column on the left.
+
+For each zone, verify:
+- pH should come from the "Soil pH" labeled column on the right side of the table
+- OM should come from the "OM %" labeled column on the left side of the table
+- These two values will often be numerically similar but are completely different measurements
+
 REPORT READING:
 - Always read BOTH the Soil Analysis table AND the Soil Fertility Recommendations table from the PDF.
 - The lab's Soil Fertility Recommendations are the primary source of truth for nutrient rates — use them exactly as stated.
