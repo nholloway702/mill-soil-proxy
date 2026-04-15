@@ -47,11 +47,100 @@ EQUINE/LIVESTOCK SEGMENT OVERRIDE: Regardless of what crop names, field IDs, or 
 
   agronomy: `
 SEGMENT: AGRONOMY (Farm / Row Crop)
-- Use full agronomic language appropriate for a farmer. Reference yield goals and economic thresholds.
-- All rates in lbs per acre.
-- Program should follow crop-specific timing (pre-plant, at-plant, side-dress, topdress as appropriate).
-- Tailor recommendations to the specific crop and tillage system provided in the customer context.
-- No Mill catalog products are available for this segment yet. Make agronomically sound recommendations and note "consult Mill staff for product and pricing" for every product entry.`,
+
+REPORT READING:
+- Always read BOTH the Soil Analysis table AND the Soil Fertility Recommendations table from the PDF.
+- The lab's Soil Fertility Recommendations are the primary source of truth for nutrient rates — use them exactly as stated.
+- Capture the Farm name and Grower name separately — both appear in the report header.
+- The Intended Crop column in the recommendations table is the definitive crop for each field — use it, do not rely on what staff entered in context.
+- Yield Goal is stated in the recommendations table — always reference it in the output.
+- Lime is expressed in Tons/A in agronomy reports — always use tons/acre not lbs/acre for lime.
+- Some fields will have multiple crops listed (e.g. Corn + Triticale, Corn + Wheat) — treat each crop as a separate application in the annual program.
+
+LIME CONVERSION FOR SOLU-CAL:
+When lime is recommended in the lab report (Tons/A), convert to Solu-Cal as follows:
+- Traditional lime rate (tons/acre) x 0.25 = Solu-Cal equivalent (tons/acre)
+- Convert to lbs: Solu-Cal tons/acre x 2000 = lbs/acre
+- Example: 1.0 ton/acre traditional lime = 0.25 tons = 500 lbs/acre Solu-Cal
+- Example: 0.8 tons/acre = 0.2 tons = 400 lbs/acre Solu-Cal
+- If Mg is also low → recommend Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- If Mg is adequate → recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- Always note: "Solu-Cal works at 1/4 the rate of traditional lime, correcting pH in the same growing season rather than 12-18 months"
+- If lime rate is 0.0 tons/acre → no lime needed, state pH is adequate
+
+NITROGEN PROGRAM:
+- Use the lab's N recommendation exactly.
+- For CORN: Split N into pre-plant/at-plant and side-dress applications.
+  - At-plant: 30-40 lbs N/acre as starter (if starter fertilizer is used)
+  - Side-dress: remainder applied at V4-V6 growth stage
+  - Always note: "For high-yield corn (>250 bu/acre goal), consider UAN side-dress application at V5-V6 for maximum efficiency"
+- For SOYBEANS: N rate is typically 15 lbs/acre inoculant-based — note importance of rhizobium inoculant.
+- For WHEAT/TRITICALE: Split N — apply only 15-20 lbs/acre in fall, remainder in early spring before jointing.
+  - Apply sulfur in sulfate form with spring N application (thiosulfate does not count)
+- For ORCHARDGRASS/GRASS HAY: Apply 50 lbs N/acre after each cutting.
+- For SORGHUM: N is typically 0 due to high soil levels — note if soil test shows adequate.
+- For SNAP BEANS: Apply additional 30-50 lbs N/acre after plants reach 2-3 leaf stage through flowering.
+
+PHOSPHORUS:
+- Use lab recommendation exactly in lbs P₂O₅/acre.
+- When lab comments say "For best results apply 20-40# P2O5 as side placement" — always include this note in the program.
+- When P is 0 in lab rec but soil test shows adequate P → note "No additional phosphorus needed based on soil test."
+
+POTASSIUM:
+- Use lab recommendation exactly in lbs K₂O/acre.
+- When lab comments say "apply 20-30# K2O as side placement" — include this note.
+
+MICRONUTRIENTS — always include if lab recommends them:
+- ZINC: "Apply as side-band near crop row for maximum effectiveness. Foliar application for non-row crops."
+- SULFUR: "Apply in sulfate form (ammonium sulfate, gypsum). Thiosulfate does not contain sulfate and should not be used as the sole sulfur source."
+- BORON: "Apply on broadcast basis. Do not over-apply — boron toxicity can occur at excessive rates."
+- MAGNESIUM: "Apply as magnesium oxide, Epsom salts (magnesium sulfate), K-Mag, or Sul-PO-Mag. Do not rely on dolomitic lime alone if immediate correction is needed."
+
+APPLICATION TIMING — build the annual program around these windows:
+
+CORN:
+- Pre-plant (March-April): Lime, broadcast P and K, zinc if needed
+- At-plant: Starter fertilizer (30 lbs N + 20-40 lbs P2O5 + 20-30 lbs K2O as side placement or 2x2)
+- Side-dress (V4-V6, late May-June): Remaining N, sulfur if needed
+
+SOYBEANS:
+- Pre-plant (April-May): Lime, broadcast P and K
+- At-plant: Inoculant, starter P if needed
+- No in-season N needed
+
+WINTER WHEAT:
+- Fall (September-October): 15-20 lbs N/acre, P and K, lime if needed
+- Spring (February-March): Remaining N + sulfur in sulfate form before jointing
+
+TRITICALE:
+- Same as winter wheat timing
+
+SORGHUM:
+- Pre-plant (May): Lime if needed, P and K if needed
+- At-plant: Sulfur and zinc if recommended
+
+SNAP BEANS:
+- Pre-plant: Lime, P and K
+- At-plant: Full N recommendation
+- In-season (2-3 leaf stage): Additional 30-50 lbs N/acre through flowering
+
+ORCHARDGRASS/GRASS HAY:
+- Spring (March-April): Lime if needed, P and K
+- After each cutting: 50 lbs N/acre
+
+TONE AND FORMAT:
+- Write for a farmer audience — professional, direct, agronomically precise.
+- Use proper agronomic terminology: side-dress, broadcast, side-band, pre-plant incorporated, V4-V6, jointing, etc.
+- Reference yield goals directly: "To achieve your 300 bu/acre yield goal on Field 1..."
+- Be concise in customer notes — farmers want facts and recommendations, not explanation.
+- Customer notes should read like advice from a trusted agronomist, not a retail store.
+
+JSON OUTPUT DIFFERENCES FOR AGRONOMY:
+- annualProgram timing entries should follow the crop timing windows above, not generic seasonal names.
+- productList for agronomy: list nutrients as lbs/acre (N, P₂O₅, K₂O, etc.) — do NOT recommend specific bagged fertilizer products.
+- limeStrategy: use Solu-Cal with tons/acre conversion, include both the traditional lime rate from lab and the Solu-Cal equivalent.
+- executiveSummary: lead with yield goals, most limiting nutrients, and lime status.
+- customerNotes: professional agronomic tone, reference specific fields by name, mention any lab comments about application method.`,
 };
 
 // ─── residential: Lawn Care Guide decision tree ───────────────────────────────
