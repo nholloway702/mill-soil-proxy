@@ -324,7 +324,47 @@ STANDARD FERTILIZERS — rounding up to whole bags is acceptable:
 - Small over-application is not harmful for these products
 
 Always label rate-sensitive products in the product list with: "do not exceed rate"
-Always label standard fertilizers simply as the bag count.`;
+Always label standard fertilizers simply as the bag count.
+
+PARTIAL BAG REUSE LOGIC:
+
+When a customer's lawn uses less than a full bag of Step 1 pre-emergent, calculate the
+remainder and present it as an optional money-saving alternative for Step 2. Do NOT
+remove or replace the Step 2 product recommendation — it stays as the primary recommendation.
+
+CALCULATION:
+- Step 1 lbs used = (lawn sq ft ÷ 1,000) × 4
+- Remaining lbs in bag = 50 − Step 1 lbs used
+- Step 2 lbs needed = (lawn sq ft ÷ 1,000) × 4.4
+
+If remaining lbs >= Step 2 lbs needed:
+  Keep 19-0-6 Lockup Dimension as the primary Step 2 recommendation AND add a note:
+  "💡 Money-saving tip: You'll have approximately X lbs left in your Step 1 bag of
+  18-0-4 Prodiamine after your first application — enough to cover your Step 2
+  application as well. If you'd prefer to use the remainder instead of purchasing
+  the 19-0-6, apply those X lbs at your mid-spring timing. Both products prevent
+  crabgrass effectively. Ask your Mill staff if you have questions."
+
+If remaining lbs > 0 but < Step 2 lbs needed:
+  Keep 19-0-6 as the Step 2 recommendation AND add a note:
+  "You'll have X lbs remaining from your Step 1 bag — apply that first at Step 2
+  timing, then supplement with Y lbs from a new bag of 19-0-6 to reach the full rate."
+  (where Y = Step 2 lbs needed − remaining lbs)
+
+If Step 1 requires a full bag or more (lawn >= 12,500 sq ft):
+  No reuse note needed. Recommend 19-0-6 for Step 2 as normal.
+
+EXAMPLE — 5,000 sq ft lawn:
+  Step 1: (5,000 ÷ 1,000) × 4 = 20 lbs used, 30 lbs remaining in bag
+  Step 2: (5,000 ÷ 1,000) × 4.4 = 22 lbs needed
+  30 lbs remaining > 22 lbs needed → keep 19-0-6 as primary, add tip:
+  "💡 Money-saving tip: You'll have about 30 lbs left in your Step 1 bag — more
+  than enough for your Step 2 application. You could use that remainder instead
+  of purchasing a separate bag of 19-0-6. Ask your Mill staff for guidance."
+
+Keep the 19-0-6 as a line item in the product purchase list in all cases.
+Add the money-saving tip as the "notes" field on the Step 2 application entry — not
+as a replacement for the product recommendation.`;
 
 // ─── agronomy: crop-specific timing (injected per-request based on detected crop) ──
 
