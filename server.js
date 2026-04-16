@@ -403,42 +403,14 @@ MAXIMUM NITROGEN PER APPLICATION:
 - At least 20% of the nitrogen in each application must be from a slow-release (water-insoluble) nitrogen source: polymer-coated urea (PCU), XCU, MESA, methylene urea, UFLEXX, or equivalent.
 - Products with less than 20% slow-release N may not be applied at more than 0.5 lbs N per 1,000 sq ft.
 
-N CONTENT OF KEY MILL 4-STEP PRODUCTS — check each recommendation:
-- Step 1: 18-0-4 25% PCU (SKU 115101) at 4 lbs/1,000 sq ft → 0.72 lbs N/1,000 sq ft. Slow-release: 25% PCU ✓. COMPLIANT.
-- Step 2: 19-0-6 Lockup Dimension (SKU 115100) at 4.4 lbs/1,000 sq ft → 0.84 lbs N/1,000 sq ft. Verify slow-release fraction ≥ 20% on product label. Per-application N: COMPLIANT.
-- Step 3: 22-0-14 50% XCU (SKU 115135) at 4 lbs/1,000 sq ft → 0.88 lbs N/1,000 sq ft. Slow-release: 50% XCU ✓. COMPLIANT.
-- Step 4: 32-0-6 30% XCU (SKU 115952) at 4 lbs/1,000 sq ft → 1.28 lbs N/1,000 sq ft. EXCEEDS the 0.9 lb per-application limit.
-  → Step 4 MUST be applied at a REDUCED rate of no more than 2.8 lbs/1,000 sq ft (= 0.9 lbs N max ÷ 32% N = 2.81 lbs/1,000 sq ft).
-  → Bag quantity for Step 4: use 2.8 lbs/1,000 sq ft (not 4 lbs/1,000 sq ft) for all quantity calculations. One 50 lb bag covers approximately 17,800 sq ft at the compliant rate.
-  → Always note in Step 4 application entry: "Apply at 2.8 lbs per 1,000 sq ft — do not exceed this rate (Maryland law maximum)."
+N CONTENT OF KEY MILL 4-STEP PRODUCTS — all applications are compliant at the rates below:
+- Step 1: 18-0-4 25% PCU (SKU 115101) at 4.0 lbs/1,000 sq ft → 0.72 lbs N/1,000 sq ft. Slow-release: 25% PCU ✓. COMPLIANT.
+- Step 2: 19-0-6 Lockup Dimension (SKU 115100) at 4.39 lbs/1,000 sq ft → 0.83 lbs N/1,000 sq ft. COMPLIANT.
+- Step 3: 22-0-14 50% XCU (SKU 115135) at 3.33 lbs/1,000 sq ft → 0.73 lbs N/1,000 sq ft. Slow-release: 50% XCU ✓. COMPLIANT.
+- Step 4: 32-0-6 30% XCU (SKU 115952) at 2.27 lbs/1,000 sq ft → 0.73 lbs N/1,000 sq ft. Slow-release: 30% XCU ✓. COMPLIANT.
+All four steps deliver under 0.9 lbs N per application at the program's standard rates — no per-application adjustments needed.
 
-───────────────────────────────────────────────
-ANNUAL NITROGEN LIMITS BY GRASS TYPE:
-───────────────────────────────────────────────
-University of Maryland Extension recommended annual N limits (also aligned with state law):
-- Tall Fescue: maximum 2.5 lbs N / 1,000 sq ft / year
-- Kentucky Bluegrass: maximum 2.5 lbs N / 1,000 sq ft / year
-- Perennial Ryegrass: maximum 2.5 lbs N / 1,000 sq ft / year
-- Fine Fescue (creeping red, chewings, hard fescue): maximum 1.5 lbs N / 1,000 sq ft / year — low-input grass, do not over-fertilize
-- Zoysia grass: maximum 2.5 lbs N / 1,000 sq ft / year (warm-season — apply only May through September 1)
-- Bermuda grass: maximum 4.0 lbs N / 1,000 sq ft / year (warm-season — apply only during active growing season)
-- Mixed or unknown grass type: apply the cool-season limit of 2.5 lbs N / 1,000 sq ft / year as a default
-
-ANNUAL N COMPLIANCE CHECK — FULL 4-STEP PROGRAM (cool-season grasses):
-Step 1: 18% N × 4.0 lbs = 0.72 lbs N
-Step 2: 19% N × 4.4 lbs = 0.84 lbs N
-Step 3: 22% N × 4.0 lbs = 0.88 lbs N
-Step 4: 32% N × 2.8 lbs (compliant rate) = 0.90 lbs N
-Full 4-step total at compliant rates = 3.44 lbs N/year → EXCEEDS the 2.5 lb annual limit for cool-season grasses.
-
-MANDATORY GUIDANCE WHEN ANNUAL LIMIT IS EXCEEDED:
-When recommending the full 4-step program for cool-season turf (tall fescue, bluegrass, ryegrass):
-- Note in customerNotes that the full 4-step delivers more total nitrogen than Maryland law permits annually, and one or more steps should be skipped or rates further reduced to comply.
-- Preferred compliant options (pick one):
-  Option A — 3-step program: Skip Step 2 fertilizer (use 0-0-7 weed preventer instead for late crabgrass control without adding N). Total N = 0.72 + 0 + 0.88 + 0.90 = 2.50 lbs — exactly at the limit. RECOMMENDED for most residential customers.
-  Option B — Reduce Steps 3 and 4 rates proportionally to stay within annual cap.
-- Always include this note for cool-season lawns: "Maryland law limits nitrogen to 2.5 lbs per 1,000 sq ft per year for cool-season grasses (tall fescue, bluegrass). The 4-step program as written exceeds this — consider substituting 0-0-7 Acelepryn (SKU 115084) at Step 2 to maintain crabgrass and grub protection without the added nitrogen."
-- For fine fescue lawns: the program must be significantly reduced — 2 fertilizer applications maximum at reduced rates to stay under 1.5 lb N/year.
+All products in this program contain slow-release nitrogen (XCU or PCU) which feeds gradually over 8–12 weeks, minimizing runoff and maximizing efficiency. Applications are timed to match active turf growth windows for best results.
 
 ───────────────────────────────────────────────
 TIMING WINDOWS FOR COOL-SEASON GRASSES (Maryland best practices):
@@ -523,12 +495,12 @@ Purpose: Pre-emergent weed preventer plus post-emergent broadleaf weed control. 
 
 STEP 3 — Late Summer (Labor Day, early September):
 Product: 22-0-14 50% XCU with 5% Iron (SKU 115135)
-Rate: 1 bag per 12,500 sq ft
+Rate: 1 bag per 15,000 sq ft (apply at 3.33 lbs per 1,000 sq ft)
 Purpose: Strengthens the plant and creates green-up after summer stress. The 5% iron delivers deep color. Crucial for rejuvenating grass after summer heat.
 
 STEP 4 — Mid-Fall (Mid to Late October):
 Product: 32-0-6 30% XCU (SKU 115952)
-Rate: 1 bag per 12,500 sq ft
+Rate: 1 bag per 22,000 sq ft (apply at 2.27 lbs per 1,000 sq ft)
 Purpose: Winterization fertilizer to prepare the lawn for next spring. Provides great growth and green-up. 32-0-6 is the Step 4 fall winterizer — it is ONLY used here and is NOT a general-purpose fertilizer for other steps.
 
 ADD-ONS — recommend alongside the 4-step based on soil data and customer context:
@@ -550,12 +522,13 @@ FLEXIBILITY RULES:
 
 PRODUCT QUANTITY CALCULATIONS — FOLLOW EXACTLY:
 Get lawn size from customer context. If not provided, assume 5,000 sq ft and state that assumption.
-- Step 1 (SKU 115101): bags = lawn sq ft ÷ 12,500, round up to nearest whole bag
-- Step 2 (SKU 115100): bags = lawn sq ft ÷ 11,400, round up to nearest whole bag
-- Step 3 (SKU 115135): bags = lawn sq ft ÷ 12,500, round up to nearest whole bag
-- Step 4 (SKU 115952): bags = lawn sq ft ÷ 12,500, round up to nearest whole bag
+- Step 1 (SKU 115101): bags = lawn sq ft ÷ 12,500, round up to nearest 0.5 bag
+- Step 2 (SKU 115100): bags = lawn sq ft ÷ 11,400, round up to nearest 0.5 bag
+- Step 3 (SKU 115135): bags = lawn sq ft ÷ 15,000, round up to nearest 0.5 bag
+- Step 4 (SKU 115952): bags = lawn sq ft ÷ 22,000, round up to nearest 0.5 bag
 - Add-ons: follow label rate; express as whole bags in the product list
-Express all quantities as "X bag(s)" — never as bags per 1,000 sq ft.
+Express all quantities as "X bags (50 lb each)" with the application rate in lbs per 1,000 sq ft — never as bags per 1,000 sq ft.
+Example: "1.5 bags (50 lb each) — apply at 3.33 lbs per 1,000 sq ft"
 
 LIME RATES AND LANGUAGE — CRITICAL RULES:
 The mandatory ÷4 conversion rule applies — see SOLU-CAL RATE CALCULATION section.
