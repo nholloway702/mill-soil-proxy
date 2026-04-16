@@ -279,6 +279,53 @@ Example — lab recommends 1.3 tons/acre:
 
 CRITICAL SELF-CHECK: If your Solu-Cal rate equals or nearly equals the lab's traditional lime rate, you have skipped the ÷4 conversion. Recalculate before outputting.`;
 
+// ─── rate-sensitive product rules — injected into every segment's prompt ─────────
+
+const RATE_SENSITIVE_PRODUCT_RULES = `
+
+RATE-SENSITIVE PRODUCT CALCULATION RULES (applies to all segments):
+
+Pre-emergent and herbicide products must NEVER be rounded up to a full bag.
+Over-applying Prodiamine or Dimension causes phytotoxicity and root damage to turf.
+
+Coverage rates for key rate-sensitive products (50 lb bag unless noted):
+- 18-0-4 25% PCU 0.38% Prodiamine (SKU 115101): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
+- 19-0-6 Lockup .17 Dimension (SKU 115100): 11,400 sq ft/bag → 4.4 lbs per 1,000 sq ft
+- 0-0-7 with 0.38% Prodiamine (SKU 115099): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
+- 16-0-5 with 0.15% Dimension (SKU 115102): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
+- 13-0-5 with 0.15% Dimension (SKU 115088): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
+- 0-0-7 with LockUp (SKU 115094): 12,500 sq ft per 40 lb bag → 3.2 lbs per 1,000 sq ft
+- 25-0-5 with Trimec (SKU 115121): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
+- 15-0-5 .067 Acelepryn (SKU 115114): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
+- 0-0-7 .067 Acelepryn (SKU 115084): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
+- 18-0-4 .08 Mesotrione (SKU 115111): 12,500 sq ft per 40 lb bag → 3.2 lbs per 1,000 sq ft
+
+CALCULATION METHOD for rate-sensitive products:
+1. lbs needed = (lawn sq ft ÷ 1,000) × lbs per 1,000 sq ft rate
+2. bags needed = lbs needed ÷ bag weight
+3. Express to one decimal — e.g. "0.4 bags (20 lbs)"
+4. In application instructions: "Apply X lbs per 1,000 sq ft — do not exceed this rate"
+5. In product list: "X bags (Y lbs total)" — never "1 bag" when actual need is under 1 bag
+
+Example — 5,000 sq ft lawn, 18-0-4 Prodiamine (SKU 115101):
+  lbs needed = (5,000 ÷ 1,000) × 4 = 20 lbs
+  bags needed = 20 ÷ 50 = 0.4 bags
+  → "0.4 bags (20 lbs) — apply at 4 lbs per 1,000 sq ft, do not exceed"
+  WRONG: "1 bag" — this is 2.5× the required amount
+
+Example — 8,000 sq ft lawn, 19-0-6 Dimension (SKU 115100):
+  lbs needed = (8,000 ÷ 1,000) × 4.4 = 35.2 lbs
+  bags needed = 35.2 ÷ 50 = 0.7 bags
+  → "0.7 bags (35 lbs) — apply at 4.4 lbs per 1,000 sq ft, do not exceed"
+  WRONG: "1 bag"
+
+STANDARD FERTILIZERS — rounding up to whole bags is acceptable:
+- 22-0-14, 32-0-6, 18-24-12, 19-0-10, and other fertilizers with NO pesticide active ingredient
+- Small over-application is not harmful for these products
+
+Always label rate-sensitive products in the product list with: "do not exceed rate"
+Always label standard fertilizers simply as the bag count.`;
+
 // ─── agronomy: crop-specific timing (injected per-request based on detected crop) ──
 
 const AGRONOMY_CROP_TIMING = {
@@ -731,7 +778,7 @@ app.post("/api/analyze", async (req, res) => {
     const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
 
     const fullSystemPrompt = typeof req.body.system === "string"
-      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + jsonInstruction
+      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + jsonInstruction
       : jsonInstruction;
 
     console.log(`[analyze] System prompt length: ${fullSystemPrompt.length} chars`);
