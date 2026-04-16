@@ -366,6 +366,107 @@ Keep the 19-0-6 as a line item in the product purchase list in all cases.
 Add the money-saving tip as the "notes" field on the Step 2 application entry — not
 as a replacement for the product recommendation.`;
 
+// ─── Maryland Lawn Fertilizer Law — injected into residential and turf prompts only ──
+
+const MARYLAND_FERTILIZER_LAW = `
+
+MARYLAND LAWN FERTILIZER LAW — MANDATORY COMPLIANCE (applies to residential and turf contractor segments):
+
+All fertilizer recommendations must comply with the Maryland Fertilizer Use Act (Environment Article, Title 8, Subtitle 8) and University of Maryland Extension agronomic guidelines. Non-compliance can result in civil penalties and contributes to Chesapeake Bay nutrient pollution.
+
+───────────────────────────────────────────────
+NO-APPLICATION WINDOW (WINTER BLACKOUT):
+───────────────────────────────────────────────
+- Do NOT schedule or recommend any nitrogen-containing fertilizer application between November 15 and March 1.
+- This applies to all products with N > 0, regardless of release type.
+- Iron-only or zero-nitrogen products (0-0-0 Fe, lime, gypsum) may be applied year-round.
+- If a recommended application falls in this window, shift it to the first permissible date outside the blackout period. Note the restriction in customerNotes.
+- Do NOT apply fertilizer on frozen ground even outside the blackout window.
+- Do NOT apply when rainfall greater than 0.5 inch is forecast within 24 hours.
+
+───────────────────────────────────────────────
+PHOSPHORUS RESTRICTIONS:
+───────────────────────────────────────────────
+Phosphorus (P₂O₅ > 0) may ONLY be applied under these conditions:
+  1. Soil test from within the past 3 years confirms phosphorus deficiency (rating Low or Very Low), OR
+  2. Customer is establishing a new lawn — new seeding or sod installation only in the FIRST growing season.
+
+- For all ESTABLISHED lawns with Adequate, High, or Very High phosphorus: recommend only zero-phosphorus products.
+- The Mill 4-step core products (18-0-4, 19-0-6, 22-0-14, 32-0-6, 0-0-7 products) are ALL zero-phosphorus — fully compliant for established lawns in every case.
+- 18-24-12 Starter (SKU 115137): contains phosphorus — only recommend if (a) soil test confirms P deficiency AND overseeding/new lawn, OR (b) new lawn establishment. Do not recommend for established lawns with adequate P.
+- If soil test shows Low or Very Low phosphorus AND lawn is established (not new): note in customerNotes that phosphorus is deficient but Maryland law requires it be applied only at seeding or with a documented soil test on file. Provide the soil test documentation note.
+
+───────────────────────────────────────────────
+MAXIMUM NITROGEN PER APPLICATION:
+───────────────────────────────────────────────
+- Maximum 0.9 lbs N per 1,000 sq ft per single application.
+- At least 20% of the nitrogen in each application must be from a slow-release (water-insoluble) nitrogen source: polymer-coated urea (PCU), XCU, MESA, methylene urea, UFLEXX, or equivalent.
+- Products with less than 20% slow-release N may not be applied at more than 0.5 lbs N per 1,000 sq ft.
+
+N CONTENT OF KEY MILL 4-STEP PRODUCTS — check each recommendation:
+- Step 1: 18-0-4 25% PCU (SKU 115101) at 4 lbs/1,000 sq ft → 0.72 lbs N/1,000 sq ft. Slow-release: 25% PCU ✓. COMPLIANT.
+- Step 2: 19-0-6 Lockup Dimension (SKU 115100) at 4.4 lbs/1,000 sq ft → 0.84 lbs N/1,000 sq ft. Verify slow-release fraction ≥ 20% on product label. Per-application N: COMPLIANT.
+- Step 3: 22-0-14 50% XCU (SKU 115135) at 4 lbs/1,000 sq ft → 0.88 lbs N/1,000 sq ft. Slow-release: 50% XCU ✓. COMPLIANT.
+- Step 4: 32-0-6 30% XCU (SKU 115952) at 4 lbs/1,000 sq ft → 1.28 lbs N/1,000 sq ft. EXCEEDS the 0.9 lb per-application limit.
+  → Step 4 MUST be applied at a REDUCED rate of no more than 2.8 lbs/1,000 sq ft (= 0.9 lbs N max ÷ 32% N = 2.81 lbs/1,000 sq ft).
+  → Bag quantity for Step 4: use 2.8 lbs/1,000 sq ft (not 4 lbs/1,000 sq ft) for all quantity calculations. One 50 lb bag covers approximately 17,800 sq ft at the compliant rate.
+  → Always note in Step 4 application entry: "Apply at 2.8 lbs per 1,000 sq ft — do not exceed this rate (Maryland law maximum)."
+
+───────────────────────────────────────────────
+ANNUAL NITROGEN LIMITS BY GRASS TYPE:
+───────────────────────────────────────────────
+University of Maryland Extension recommended annual N limits (also aligned with state law):
+- Tall Fescue: maximum 2.5 lbs N / 1,000 sq ft / year
+- Kentucky Bluegrass: maximum 2.5 lbs N / 1,000 sq ft / year
+- Perennial Ryegrass: maximum 2.5 lbs N / 1,000 sq ft / year
+- Fine Fescue (creeping red, chewings, hard fescue): maximum 1.5 lbs N / 1,000 sq ft / year — low-input grass, do not over-fertilize
+- Zoysia grass: maximum 2.5 lbs N / 1,000 sq ft / year (warm-season — apply only May through September 1)
+- Bermuda grass: maximum 4.0 lbs N / 1,000 sq ft / year (warm-season — apply only during active growing season)
+- Mixed or unknown grass type: apply the cool-season limit of 2.5 lbs N / 1,000 sq ft / year as a default
+
+ANNUAL N COMPLIANCE CHECK — FULL 4-STEP PROGRAM (cool-season grasses):
+Step 1: 18% N × 4.0 lbs = 0.72 lbs N
+Step 2: 19% N × 4.4 lbs = 0.84 lbs N
+Step 3: 22% N × 4.0 lbs = 0.88 lbs N
+Step 4: 32% N × 2.8 lbs (compliant rate) = 0.90 lbs N
+Full 4-step total at compliant rates = 3.44 lbs N/year → EXCEEDS the 2.5 lb annual limit for cool-season grasses.
+
+MANDATORY GUIDANCE WHEN ANNUAL LIMIT IS EXCEEDED:
+When recommending the full 4-step program for cool-season turf (tall fescue, bluegrass, ryegrass):
+- Note in customerNotes that the full 4-step delivers more total nitrogen than Maryland law permits annually, and one or more steps should be skipped or rates further reduced to comply.
+- Preferred compliant options (pick one):
+  Option A — 3-step program: Skip Step 2 fertilizer (use 0-0-7 weed preventer instead for late crabgrass control without adding N). Total N = 0.72 + 0 + 0.88 + 0.90 = 2.50 lbs — exactly at the limit. RECOMMENDED for most residential customers.
+  Option B — Reduce Steps 3 and 4 rates proportionally to stay within annual cap.
+- Always include this note for cool-season lawns: "Maryland law limits nitrogen to 2.5 lbs per 1,000 sq ft per year for cool-season grasses (tall fescue, bluegrass). The 4-step program as written exceeds this — consider substituting 0-0-7 Acelepryn (SKU 115084) at Step 2 to maintain crabgrass and grub protection without the added nitrogen."
+- For fine fescue lawns: the program must be significantly reduced — 2 fertilizer applications maximum at reduced rates to stay under 1.5 lb N/year.
+
+───────────────────────────────────────────────
+TIMING WINDOWS FOR COOL-SEASON GRASSES (Maryland best practices):
+───────────────────────────────────────────────
+- Spring N: March 1–May 15 only (light applications; heavy spring N drives thatch and disease)
+- Summer N: Avoid July–August for cool-season grasses — heat-stressed turf cannot utilize N and runoff risk is highest
+- Fall N: September 1–November 15 — MOST IMPORTANT nitrogen window for cool-season turf; drives root development and spring recovery
+- Warm-season N: May 1–September 1 only; do not apply N to warm-season grasses after September 1
+
+───────────────────────────────────────────────
+LIME COMPLIANCE:
+───────────────────────────────────────────────
+- Lime (calcium carbonate, Solu-Cal) is not subject to the nitrogen or phosphorus application restrictions and may be applied year-round.
+- Always recommend lime based on soil test data. Do not recommend lime without a documented pH deficiency in the soil test.
+- Lime cannot be substituted for a deficient nutrient — it corrects pH only.
+
+───────────────────────────────────────────────
+TURF CONTRACTOR RECORD-KEEPING (turf segment only):
+───────────────────────────────────────────────
+Commercial fertilizer and pesticide applicators in Maryland are required to:
+- Hold a valid Maryland Commercial Pesticide Applicator License for any product containing a pesticide active ingredient (Prodiamine, Dimension, Acelepryn, Trimec, Azoxystrobin, etc.)
+- Document all fertilizer and pesticide applications: date, property address, product name, rate applied, and total area treated
+- Maintain application records for a minimum of 2 years and make them available for inspection
+- Never apply fertilizer on frozen ground, during rain, or when heavy rain is forecast within 24 hours
+- Apply at specified program rates — exceeding label or program rates is a violation of the Maryland Fertilizer Use Act
+
+Always include this note in turf contractor reports: "Maryland requires licensed commercial applicators to maintain records of all fertilizer applications including date, product, rate, and property address. Retain records for 2 years. Ensure all crew members apply at the rates specified in this program — over-application violates the Maryland Fertilizer Use Act."`;
+
 // ─── agronomy: crop-specific timing (injected per-request based on detected crop) ──
 
 const AGRONOMY_CROP_TIMING = {
@@ -776,11 +877,11 @@ function buildSystemAddition(segment, body) {
     if (/overseed|renovation|new lawn|new seeding|bare spots/i.test(contextText)) {
       products.push(...CATALOG.filter(p => p.category.startsWith("Grass Seed")));
     }
-    return instructions + RESIDENTIAL_DECISION_TREE + buildCatalogText(products);
+    return instructions + MARYLAND_FERTILIZER_LAW + RESIDENTIAL_DECISION_TREE + buildCatalogText(products);
   }
 
   if (segment === "turf") {
-    return instructions + TURF_CATALOG_PREAMBLE + buildCatalogText(CATALOG);
+    return instructions + MARYLAND_FERTILIZER_LAW + TURF_CATALOG_PREAMBLE + buildCatalogText(CATALOG);
   }
 
   if (segment === "equine") {
