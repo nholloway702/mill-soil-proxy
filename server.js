@@ -294,12 +294,16 @@ traditional_lbs_per_1000 = (target_pH − current_pH) × texture_factor
 
 If current_pH >= target_pH → no lime needed; state pH is adequate. Do not recommend lime.
 
+DISCARD THE LAB'S LIME RECOMMENDATION (residential, turf, garden, pasture segments):
+The lab's lime rate printed on the report is for traditional ground limestone and is NOT used in this calculation. Ignore it entirely. The formula above is the only source of truth for these segments. Do not read, reference, cite, or blend the lab's lbs-per-1,000-sq-ft lime figure into the Solu-Cal calculation. The result of Step 3 replaces whatever the lab printed.
+
 ────────────────────────────────────────────
 STEP 4 — CONVERT TO SOLU-CAL (÷4 RULE)
 ────────────────────────────────────────────
 solu_cal_lbs_per_1000 = traditional_lbs_per_1000 ÷ 4
 
 CRITICAL: If your Solu-Cal rate equals or nearly equals the traditional lime rate, you skipped the ÷4. Recalculate before outputting.
+CRITICAL: If your output mentions "the lab recommends X lbs" as a reason to change the Solu-Cal rate, you are ignoring this rule. The lab figure is irrelevant for Solu-Cal sizing in these segments.
 
 ────────────────────────────────────────────
 STEP 5 — HARD CAP AND SPLIT APPLICATIONS
@@ -619,6 +623,7 @@ Example: "1.5 bags (50 lb each) — apply at 3.33 lbs per 1,000 sq ft"
 LIME RATES AND LANGUAGE — CRITICAL RULES:
 Always use the formula-based lime calculation — see SOLU-CAL LIME RATE CALCULATION section above.
 Calculate lime need from the pH gap and soil texture: (target_pH − current_pH) × texture_factor ÷ 4 = Solu-Cal lbs/1,000 sq ft.
+NEVER use the lab's printed lime recommendation (lbs per 1,000 sq ft) as the basis for the Solu-Cal rate. The lab's figure is for traditional ground lime and must be ignored for Solu-Cal sizing. The formula is the only source of truth.
 Never use hardcoded lbs/1,000 sq ft values — always derive from the formula.
 Maximum 12.5 lbs Solu-Cal per 1,000 sq ft per application — this is an absolute hard limit.
 - Maximum 3 applications per year. If more are needed, continue into the following year.
