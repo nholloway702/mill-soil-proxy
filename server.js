@@ -79,11 +79,13 @@ REPORT READING:
 - Some fields will have multiple crops listed (e.g. Corn + Triticale, Corn + Wheat) — treat each crop as a separate application in the annual program.
 
 LIME CONVERSION FOR SOLU-CAL (agronomy — tons/acre format):
-The mandatory ÷4 conversion rule applies — see SOLU-CAL RATE CALCULATION section.
+Use the formula-based calculation — see SOLU-CAL LIME RATE CALCULATION section for target pH by crop and the ÷4 conversion rule.
 - Lab tons/acre ÷ 4 = Solu-Cal tons/acre; then × 2,000 = Solu-Cal lbs/acre
+- Apply 544 lbs/acre per-application cap; split into multiple passes of ≤544 lbs/acre if needed
 - If %Mg base saturation is below 12% → recommend Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
 - If %Mg base saturation is 12% or above → recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Always state both the lab's traditional rate AND the Solu-Cal equivalent in limeStrategy
+- Always show the math in limeStrategy (see STEP 7 of the formula)
 - Always note: "Solu-Cal corrects pH in the same growing season vs. 12-18 months for traditional lime"
 - If lime rate is 0.0 tons/acre → no lime needed, state pH is adequate
 
@@ -199,7 +201,7 @@ annualProgram — produce one timing group per crop stage (Pre-plant, At-plant, 
 
 productList for agronomy: list nutrients as lbs/acre (N, P₂O₅, K₂O, etc.) — do NOT recommend specific bagged fertilizer products.
 
-limeStrategy: use Solu-Cal with tons/acre conversion, include both the traditional lime rate from lab and the Solu-Cal equivalent.
+limeStrategy: use Solu-Cal with tons/acre conversion, show the full pH gap math (see STEP 7 of the formula), include both the traditional lime rate from lab and the Solu-Cal equivalent.
 
 executiveSummary: lead with yield goals, most limiting nutrients, and lime status.
 
@@ -232,52 +234,114 @@ farmSummaryTable — include this as a top-level field in the JSON response. One
   - notes: any lab application comments for this field (side-band placement, sulfur form, boron caution, etc.)`,
 };
 
-// ─── Solu-Cal mandatory conversion — injected into every segment's prompt ────────
+// ─── Solu-Cal formula-based lime calculation — injected into every segment's prompt ──
 
 const SOLU_CAL_MANDATORY_CONVERSION = `
 
-SOLU-CAL RATE CALCULATION — MANDATORY CONVERSION (applies to all segments):
+SOLU-CAL LIME RATE CALCULATION — FORMULA-BASED (applies to all segments):
 
-The lab report provides lime recommendations in traditional lime equivalents. Solu-Cal works at EXACTLY 1/4 the rate. You MUST divide by 4 before writing any Solu-Cal rate. Never apply the lab's lime number directly as a Solu-Cal rate.
+Solu-Cal is exactly 4× more effective per unit weight than traditional ground limestone. You MUST divide any traditional lime rate by 4 before outputting a Solu-Cal rate.
 
-FOR RESIDENTIAL AND TURF REPORTS (lab rate in lbs per 1,000 sq ft):
-Step 1: Read the lab's lime recommendation in lbs per 1,000 sq ft
-Step 2: Divide by 4 → this is total Solu-Cal needed in lbs per 1,000 sq ft
-Step 3: Split into passes of no more than 12.5 lbs per 1,000 sq ft, spaced 8 weeks apart
+────────────────────────────────────────────
+STEP 1 — SOIL TEXTURE FACTOR
+────────────────────────────────────────────
+Read soil_texture from customer context. If not provided, assume loam and state that assumption.
+Texture factors (lbs of traditional ground limestone per 1,000 sq ft to raise pH by 1.0 point):
+- Sandy: 37 lbs per point
+- Loam: 50 lbs per point (default)
+- Clay: 67 lbs per point
 
-Example — lab recommends 80 lbs/1,000 sq ft:
-  Solu-Cal total = 80 ÷ 4 = 20 lbs/1,000 sq ft
-  → 2 applications of 10 lbs each, 8 weeks apart
-  WRONG: "Apply 80 lbs of Solu-Cal" — this is 4× too much
+────────────────────────────────────────────
+STEP 2 — TARGET pH BY SEGMENT AND CROP
+────────────────────────────────────────────
+- Residential turf (all grass types): 6.5
+- Turf contractor (all grass types): 6.5
+- Equine/livestock pasture (grass/mixed): 6.5
+- Equine/livestock pasture (alfalfa fields): 6.8
+- Agronomy corn: 6.3
+- Agronomy soybeans: 6.5
+- Agronomy wheat: 6.2
+- Agronomy alfalfa: 6.8
+- Agronomy mixed hay/grass: 6.5
+- If crop type unknown: default to 6.5
 
-Example — lab recommends 60 lbs/1,000 sq ft:
-  Solu-Cal total = 60 ÷ 4 = 15 lbs/1,000 sq ft
-  → 1 application of 12.5 lbs + 1 application of 2.5 lbs, 8 weeks apart
-  WRONG: "Apply 60 lbs of Solu-Cal"
+────────────────────────────────────────────
+STEP 3 — CALCULATE TRADITIONAL LIME NEEDED
+────────────────────────────────────────────
+traditional_lbs_per_1000 = (target_pH − current_pH) × texture_factor
 
-Example — lab recommends 40 lbs/1,000 sq ft:
-  Solu-Cal total = 40 ÷ 4 = 10 lbs/1,000 sq ft
-  → Single application of 10 lbs/1,000 sq ft
-  WRONG: "Apply 40 lbs of Solu-Cal"
+If current_pH >= target_pH → no lime needed; state pH is adequate. Do not recommend lime.
 
-Residential/turf limits: max 12.5 lbs per application · max 3 applications per year · one 50 lb bag covers 4,000 sq ft at full rate
+────────────────────────────────────────────
+STEP 4 — CONVERT TO SOLU-CAL (÷4 RULE)
+────────────────────────────────────────────
+solu_cal_lbs_per_1000 = traditional_lbs_per_1000 ÷ 4
 
-FOR AGRONOMY REPORTS (lab rate in tons per acre):
-Step 1: Read the lab's lime recommendation in tons per acre
-Step 2: Divide by 4 → Solu-Cal tons per acre
-Step 3: Multiply by 2,000 → Solu-Cal lbs per acre
-Step 4: Split if total exceeds 500 lbs/acre per application
+CRITICAL: If your Solu-Cal rate equals or nearly equals the traditional lime rate, you skipped the ÷4. Recalculate before outputting.
 
-Example — lab recommends 0.8 tons/acre:
-  Solu-Cal = 0.8 ÷ 4 = 0.2 tons/acre = 400 lbs/acre → single pass
-  WRONG: "Apply 0.8 tons/acre Solu-Cal" or "Apply 1,600 lbs/acre"
+────────────────────────────────────────────
+STEP 5 — HARD CAP AND SPLIT APPLICATIONS
+────────────────────────────────────────────
+NEVER apply more than 12.5 lbs of Solu-Cal per 1,000 sq ft in a single application — this is an absolute hard limit.
 
-Example — lab recommends 1.3 tons/acre:
-  Solu-Cal = 1.3 ÷ 4 = 0.325 tons/acre = 650 lbs/acre
-  → Split: 500 lbs/acre + 150 lbs/acre
-  WRONG: "Apply 1.3 tons/acre Solu-Cal"
+- If solu_cal_lbs_per_1000 <= 12.5 → single application
+- If solu_cal_lbs_per_1000 > 12.5 → split into multiple applications:
+  - Each application = 12.5 lbs per 1,000 sq ft
+  - Number of applications = ceiling(solu_cal_lbs_per_1000 ÷ 12.5)
+  - Space applications 8 weeks apart
+  - Maximum 3 applications per year — if more needed, continue into following year
+  - Always state: "Apply X applications of 12.5 lbs per 1,000 sq ft, spaced 8 weeks apart. Do not exceed 12.5 lbs per 1,000 sq ft in any single application."
 
-CRITICAL SELF-CHECK: If your Solu-Cal rate equals or nearly equals the lab's traditional lime rate, you have skipped the ÷4 conversion. Recalculate before outputting.`;
+────────────────────────────────────────────
+STEP 6 — BAG CALCULATIONS
+────────────────────────────────────────────
+FOR RESIDENTIAL AND TURF (per 1,000 sq ft basis):
+bags per application = (solu_cal_lbs_per_1000 × lawn_sq_ft ÷ 1,000) ÷ 50
+Round up to nearest 0.5 bag.
+Express as: "X bags per application × Y applications = Z total bags"
+(If single application: "X bags total")
+
+FOR PASTURE AND AGRONOMY (per acre basis):
+solu_cal_lbs_per_acre = solu_cal_lbs_per_1000 × 43.56
+(43,560 sq ft per acre ÷ 1,000 = 43.56)
+Per-application cap: 12.5 × 43.56 = 544 lbs Solu-Cal per acre per application
+Bags per acre per application = 544 ÷ 50 = 10.9 → always round up = 11 bags per acre
+Total bags = bags per application × number of applications × total acres
+
+FOR AGRONOMY (when lab provides lime rate in tons/acre):
+Use the lab's lime recommendation in tons/acre as the traditional lime rate.
+lab_tons_per_acre ÷ 4 = Solu-Cal tons/acre
+Solu-Cal tons/acre × 2,000 = Solu-Cal lbs/acre
+Apply 544 lbs/acre per-application cap; split into multiple passes if needed.
+Always state both the lab's traditional rate AND the Solu-Cal equivalent in limeStrategy.
+
+────────────────────────────────────────────
+STEP 7 — ALWAYS SHOW THE MATH IN limeStrategy
+────────────────────────────────────────────
+Every limeStrategy output must include:
+"Current pH: X.X | Target pH: X.X | Gap: X.X points | Soil texture: [loam/sandy/clay] | Traditional lime needed: XX lbs per 1,000 sq ft | Solu-Cal equivalent (÷4): XX lbs per 1,000 sq ft | Applications needed: X at 12.5 lbs per 1,000 sq ft spaced 8 weeks apart"
+
+────────────────────────────────────────────
+WORKED EXAMPLES — verify output matches these
+────────────────────────────────────────────
+Example 1: Residential, pH 5.5, target 6.5, loam, 5,000 sq ft
+- Gap: 1.0 point | Traditional: 1.0 × 50 = 50 lbs/1,000 sq ft
+- Solu-Cal: 50 ÷ 4 = 12.5 lbs/1,000 sq ft → single application (exactly at cap)
+- Bags: (12.5 × 5,000 ÷ 1,000) ÷ 50 = 1.25 → round up to 1.5 bags
+- Output: "1 application of 12.5 lbs per 1,000 sq ft — 1.5 bags"
+
+Example 2: Residential, pH 5.1, target 6.5, loam, 5,000 sq ft
+- Gap: 1.4 points | Traditional: 1.4 × 50 = 70 lbs/1,000 sq ft
+- Solu-Cal: 70 ÷ 4 = 17.5 lbs/1,000 sq ft → exceeds 12.5 cap → 2 applications
+- Bags per application: (12.5 × 5,000 ÷ 1,000) ÷ 50 = 1.25 → round up to 1.5 bags
+- Output: "2 applications of 12.5 lbs per 1,000 sq ft, 8 weeks apart — 1.5 bags per application, 3 bags total"
+
+Example 3: Pasture, pH 5.3, target 6.5, loam, 10 acres
+- Gap: 1.2 points | Traditional: 1.2 × 50 = 60 lbs/1,000 sq ft
+- Solu-Cal: 60 ÷ 4 = 15 lbs/1,000 sq ft → exceeds 12.5 → 2 applications
+- Per acre: 12.5 × 43.56 = 544 lbs/acre per application
+- Bags per application: (544 × 10) ÷ 50 = 108.8 → round up to 109 bags
+- Output: "2 applications of 544 lbs per acre (11 bags/acre), 8 weeks apart — 109 bags per application, 218 bags total. The Mill offers bulk delivery — call 410-838-6111."`);
 
 // ─── rate-sensitive product rules — injected into every segment's prompt ─────────
 
@@ -531,13 +595,13 @@ Express all quantities as "X bags (50 lb each)" with the application rate in lbs
 Example: "1.5 bags (50 lb each) — apply at 3.33 lbs per 1,000 sq ft"
 
 LIME RATES AND LANGUAGE — CRITICAL RULES:
-The mandatory ÷4 conversion rule applies — see SOLU-CAL RATE CALCULATION section.
-Step 1: Read the lab's lime recommendation in lbs per 1,000 sq ft
-Step 2: Divide by 4 → total Solu-Cal needed in lbs per 1,000 sq ft
-Step 3: Split into passes of no more than 12.5 lbs per 1,000 sq ft, spaced 8 weeks apart
-- Maximum 3 applications per year. If more than 3 are needed, continue into the following year.
+Always use the formula-based lime calculation — see SOLU-CAL LIME RATE CALCULATION section above.
+Calculate lime need from the pH gap and soil texture: (target_pH − current_pH) × texture_factor ÷ 4 = Solu-Cal lbs/1,000 sq ft.
+Never use hardcoded lbs/1,000 sq ft values — always derive from the formula.
+Maximum 12.5 lbs Solu-Cal per 1,000 sq ft per application — this is an absolute hard limit.
+- Maximum 3 applications per year. If more are needed, continue into the following year.
 - One 50 lb bag covers 4,000 sq ft at 12.5 lbs per 1,000 sq ft.
-- Never output a Solu-Cal rate equal to the lab's traditional lime rate — that means the ÷4 was skipped.
+- Always show the math in limeStrategy (see STEP 7 of the formula).
 
 LIME SELECTION — FOLLOW THESE RULES EXACTLY:
 Always recommend Solu-Cal over standard pelletized or pulverized lime for residential customers.
@@ -567,8 +631,8 @@ Solu-Cal is The Mill's preferred lime for turf contractor customers.
 - Low pH + %Mg base saturation at 12% or above → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 - Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
-Rates: 550 lbs per acre to raise pH; 260 lbs per acre to maintain. Split if total needed exceeds one application.
-In the limeStrategy field: name the Solu-Cal product and SKU, give per-acre rate, total product for the full job, and note labor/storage savings vs traditional lime.
+Rates: Use the formula-based calculation — see SOLU-CAL LIME RATE CALCULATION section. Calculate from pH gap and soil texture; cap at 544 lbs Solu-Cal per acre per application. Do not use fixed 550/260 lbs per acre values.
+In the limeStrategy field: name the Solu-Cal product and SKU, show the full pH gap math (see STEP 7 of the formula), give per-acre rate, total product for the full job, and note labor/storage savings vs traditional lime.
 
 THE MILL — FULL PRODUCT CATALOG:
 
@@ -682,17 +746,22 @@ ELEVATED NITRATES — flag for ALL livestock species:
 - Elevated Nitrate Nitrogen on any pasture → always flag regardless of species: "Do not graze or feed hay from this field until nitrates are tested at safe levels."
 
 LIME FOR PASTURE:
-- Target pH for horse/grass/cattle/sheep/goat pastures: 6.2–6.8.
-- Target pH for alfalfa: 6.8–7.0.
-- pH below target → recommend Solu-Cal at 550 lbs/acre to raise pH.
-- pH at or above 6.5 for grass pastures → no lime needed; note pH is adequate.
+- Target pH for horse/grass/cattle/sheep/goat pastures: 6.5.
+- Target pH for alfalfa fields: 6.8.
+- pH at or above target → no lime needed; note pH is adequate.
 - Express all lime rates in lbs/acre.
+- Use the formula-based calculation — see SOLU-CAL LIME RATE CALCULATION section:
+  traditional_lbs_per_1000 = (target_pH − current_pH) × texture_factor
+  solu_cal_lbs_per_1000 = traditional_lbs_per_1000 ÷ 4
+  solu_cal_lbs_per_acre = solu_cal_lbs_per_1000 × 43.56
+  Cap at 544 lbs Solu-Cal per acre per application. Split into multiple passes if needed.
+  Always show the math in limeStrategy (see STEP 7 of the formula).
 
 SOLU-CAL SELECTION FOR PASTURE:
 - Low pH + %Mg base saturation below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
 - Low pH + %Mg base saturation at 12% or above → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
-In the limeStrategy field: name the product and SKU, state the per-acre rate (550 lbs/acre to raise, 260 lbs/acre to maintain), and calculate total bags needed for each field's acreage.
+In the limeStrategy field: name the product and SKU, show the full pH gap calculation (current pH, target pH, gap, texture factor, traditional lbs, Solu-Cal lbs), per-acre rate, number of applications, and total bags needed for each field's acreage.
 
 FERTILIZER RECOMMENDATIONS — NUTRIENTS ONLY (no specific products):
 For the equine/livestock segment, express ALL fertility recommendations as lbs of nutrient per acre, not as specific fertilizer products or SKUs.
