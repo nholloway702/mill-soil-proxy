@@ -81,8 +81,8 @@ REPORT READING:
 LIME CONVERSION FOR SOLU-CAL (agronomy — tons/acre format):
 The mandatory ÷4 conversion rule applies — see SOLU-CAL RATE CALCULATION section.
 - Lab tons/acre ÷ 4 = Solu-Cal tons/acre; then × 2,000 = Solu-Cal lbs/acre
-- If Mg is also low → recommend Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
-- If Mg is adequate → recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- If %Mg base saturation is below 12% → recommend Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- If %Mg base saturation is 12% or above → recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Always state both the lab's traditional rate AND the Solu-Cal equivalent in limeStrategy
 - Always note: "Solu-Cal corrects pH in the same growing season vs. 12-18 months for traditional lime"
 - If lime rate is 0.0 tons/acre → no lime needed, state pH is adequate
@@ -541,8 +541,8 @@ Step 3: Split into passes of no more than 12.5 lbs per 1,000 sq ft, spaced 8 wee
 
 LIME SELECTION — FOLLOW THESE RULES EXACTLY:
 Always recommend Solu-Cal over standard pelletized or pulverized lime for residential customers.
-- Low pH + Mg below 80 ppm OR %Mg below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
-- Low pH + Mg adequate → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- Low pH + %Mg base saturation below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- Low pH + %Mg base saturation at 12% or above → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 - Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
 In the limeStrategy field: name the specific Solu-Cal product and SKU, explain why it works faster than traditional lime (same-season results vs. 10–18 months for standard lime), state the number of applications as "X applications of 12.5 lbs per 1,000 sq ft spaced 8 weeks apart", give the exact total bag count for the full lawn, and note if the schedule runs into the following year.
@@ -558,13 +558,13 @@ const TURF_CATALOG_PREAMBLE = `
 Only recommend products from The Mill's catalog listed below. Do not reference or suggest products outside this list. Always include the exact product name AND SKU in every recommendation.
 
 - Match products precisely to soil deficiencies and program needs.
-- If Mg is low use Dolomitic Pelletized Lime (SKU 1158240) or Solu-Cal Magnesium (SKU 11110513) rather than Hi Calcium lime. If pH is correct and only Ca is low, use Gypsum (SKU 115204). If P is deficient use 0-45-0 Triple Superphosphate (SKU 115173). If K is low and crop is chloride-sensitive, use 0-0-50 Sulfate of Potash (SKU 1154218) over Muriate of Potash.
+- If %Mg base saturation is below 12% use Dolomitic Pelletized Lime (SKU 1158240) or Solu-Cal Magnesium (SKU 11110513) rather than Hi Calcium lime. If pH is correct and only Ca is low, use Gypsum (SKU 115204). If P is deficient use 0-45-0 Triple Superphosphate (SKU 115173). If K is low and crop is chloride-sensitive, use 0-0-50 Sulfate of Potash (SKU 1154218) over Muriate of Potash.
 - Include SKUs in the "product" field of every annualProgram application and every productList entry.
 
 SOLU-CAL LIME RULES:
 Solu-Cal is The Mill's preferred lime for turf contractor customers.
-- Low pH + Mg below 80 ppm OR %Mg below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
-- Low pH + Mg adequate → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- Low pH + %Mg base saturation below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- Low pH + %Mg base saturation at 12% or above → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 - Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
 Rates: 550 lbs per acre to raise pH; 260 lbs per acre to maintain. Split if total needed exceeds one application.
@@ -689,8 +689,8 @@ LIME FOR PASTURE:
 - Express all lime rates in lbs/acre.
 
 SOLU-CAL SELECTION FOR PASTURE:
-- Low pH + Mg below 80 ppm or %Mg below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
-- Low pH + Mg adequate → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
+- Low pH + %Mg base saturation below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
+- Low pH + %Mg base saturation at 12% or above → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 In the limeStrategy field: name the product and SKU, state the per-acre rate (550 lbs/acre to raise, 260 lbs/acre to maintain), and calculate total bags needed for each field's acreage.
 
