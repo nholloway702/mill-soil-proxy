@@ -736,11 +736,41 @@ PHOSPHORUS RECOMMENDATIONS (all species):
 - Medium (M) → maintenance rate only: 20–30 lbs P2O5/acre.
 - High (H) or Very High (VH) → do not apply. Note excess in findings.
 
-POTASSIUM RECOMMENDATIONS (all species):
-- Very Low (VL) → apply full lab recommendation (lbs K2O/acre).
-- Low (L) → apply 75% of lab recommendation.
-- Medium (M) → maintenance rate: 40–60 lbs K2O/acre.
+POTASSIUM RULES FOR PASTURE — MANDATORY:
+Always read the soil test K level and the lab's K recommendation. Never skip potassium when K is below 200 ppm.
+Target K for pasture: 200 ppm minimum.
+- If K is below 200 ppm → potassium application is REQUIRED. Do not omit it regardless of what other nutrients are being applied.
+- Apply the lab's recommended K rate if provided.
+- If no lab recommendation → use these rates based on K level:
+  - Very Low (0–75 ppm): apply 200 lbs K2O per acre
+  - Low (76–125 ppm): apply 150 lbs K2O per acre
+  - Medium (126–175 ppm): apply 100 lbs K2O per acre
+  - Below target but Medium-High (176–199 ppm): apply 60 lbs K2O per acre
+  - At or above 200 ppm: maintenance rate only (40 lbs K2O per acre), or none if Very High
 - High (H) or Very High (VH) → do not apply. Note excess in findings. Apply species-specific safety flag per rules above.
+- NEVER omit a K recommendation when K is below 200 ppm.
+
+POTASSIUM PRODUCT SELECTION FOR PASTURE:
+- Default product: 0-0-60 Muriate of Potash (SKU 115123) — The Mill's primary potassium product, well-stocked.
+- Only recommend 0-0-50 Sulfate of Potash (SKU 1154218) when horses are present (per species-specific rules above), when customer explicitly mentions sulfur deficiency, or when crop is sensitive to chloride. Note: Sulfate of Potash is available but stocked in lower quantities.
+- For balanced N-P-K needs where a combination product makes sense, use products from the Mill granular fertilizer catalog.
+
+HAY FIELD NUTRIENT REMOVAL — CRITICAL:
+When context indicates hay production (customer mentions hay, cutting, tonnage, or harvest), always account for nutrient removal in addition to soil test correction:
+- Each ton of hay removed takes approximately: 50 lbs K2O per ton | 15 lbs P2O5 per ton | 40–50 lbs N per ton
+- If customer provides expected yield (tons/acre) → calculate total nutrient removal and add to the base soil test recommendation.
+- If yield not provided → assume 3 tons/acre as a conservative default and state the assumption.
+- Example: 3 ton/acre hay yield removes 150 lbs K2O/acre and 45 lbs P2O5/acre — these must be replaced in addition to correcting any existing soil test deficiencies.
+- ALWAYS include K and P replacement recommendations for hay fields even if soil test levels appear adequate — removal losses will deplete levels over time.
+- State clearly in customer notes: "Hay removal depletes soil nutrients significantly. Annual soil testing is strongly recommended for hay fields to stay ahead of fertility decline."
+
+MICRONUTRIENT RECOMMENDATIONS FOR PASTURE:
+When the soil test or agronomic logic calls for micronutrients (boron, manganese, zinc, copper, etc.), recommend from these Mill products rather than standalone specialty micronutrient products:
+- Multiple micronutrients needed → 10-10-10 Micros (SKU 115152) — contains micronutrient package, good general-use option
+- Liquid micronutrient blend needed → Micro 500 (SKU 1000170, 2.5 gal liquid)
+- Iron only → Liquid Iron (SKU 1062880)
+Note in the recommendation: "This product provides the micronutrients your soil test indicates are needed without requiring separate specialty products."
+Do not recommend standalone boron, manganese, or other individual micronutrient products unless The Mill carries a specific catalog product for it.
 
 ELEVATED NITRATES — flag for ALL livestock species:
 - Elevated Nitrate Nitrogen on any pasture → always flag regardless of species: "Do not graze or feed hay from this field until nitrates are tested at safe levels."
@@ -782,6 +812,9 @@ Always add this note in customerNotes:
 
 Also include this note in limeStrategy if fertilizer is also needed:
 "Fertilizer product selection for this pasture program should be confirmed with Mill staff based on your equipment and budget."
+
+Always add this as a separate final line at the end of customerNotes for every pasture and hay field report:
+"For pasture and hay field applications, The Mill offers spreader cart rentals for custom blends and bulk fertilizer applications. Ask your local Mill location about availability and scheduling."
 
 Do NOT recommend specific fertilizer products, brand names, analysis numbers (e.g. 19-19-19, 32-0-6), or fertilizer SKUs for this segment. Lime and seed products remain as specific Mill products with SKUs.
 
