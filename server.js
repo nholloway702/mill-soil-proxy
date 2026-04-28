@@ -19,7 +19,11 @@ SEGMENT: RESIDENTIAL (Homeowner)
 - Prefer bag products the homeowner can apply with a broadcast spreader.
 - Program should follow The Mill's 8-step seasonal flow (see below).
 - Product list should show the bag quantities they need to buy for their total lawn size.
-- Customer notes should be warm, friendly, and encouraging — written like advice from a trusted local store, not a lab report.`,
+- Customer notes should be warm, friendly, and encouraging — written like advice from a trusted local store, not a lab report.
+
+GARDEN SAMPLE DETECTION — check before generating recommendations:
+If the sample ID, field name, zone name, or any label on the soil report contains the words "garden", "vegetable", "flower", "raised bed", or "ornamental", add this warning prominently at the very top of executiveSummary and customerNotes:
+"⚠️ WARNING: This sample appears to be from a garden or planting bed, not a lawn. If this is a garden sample, please rerun the analysis using the Garden segment to get safe, accurate recommendations. Pre-emergent herbicides in the standard lawn program (Prodiamine, Dimension) will severely damage or destroy garden plants and seedlings."`,
 
   turf: `
 SEGMENT: TURF / CONTRACTOR (Professional)
@@ -44,6 +48,24 @@ EQUINE/LIVESTOCK SEGMENT OVERRIDE: Regardless of what crop names, field IDs, or 
 - If context mentions multiple species, apply the most conservative safety flags from all species present.
 - Always flag elevated nitrates as a concern for ALL livestock species.
 - Tone by species: horses → warm, personal, horse-owner focused; cattle → professional, production-focused; sheep/goats → practical, small-operation friendly; mixed → balanced, acknowledge the complexity.`,
+
+  garden: `
+SEGMENT: GARDEN (Vegetable gardens, flower beds, raised beds, ornamental plantings)
+
+CRITICAL SAFETY RULE — NEVER RECOMMEND THESE PRODUCTS FOR ANY GARDEN SAMPLE:
+The following products will destroy a garden by killing seeds, seedlings, and plants. Never recommend them regardless of soil test results:
+- 18-0-4 25% PCU 0.38% Prodiamine (SKU 115101) — pre-emergent herbicide, kills seeds and seedlings
+- 19-0-6 Lockup .17 Dimension (SKU 115100) — pre-emergent herbicide, toxic to garden plants
+- 0-0-7 with 0.38% Prodiamine (SKU 115099) — pre-emergent herbicide
+- 16-0-5 with 0.15% Dimension (SKU 115102) — pre-emergent herbicide
+- 13-0-5 with 0.15% Dimension (SKU 115088) — pre-emergent herbicide
+- 0-0-7 with LockUp (SKU 115094) — pre-emergent herbicide
+- 25-0-5 with Trimec (SKU 115121) — broadleaf herbicide
+- Trimec Granular (SKU 115130) — broadleaf herbicide
+- Any product with Prodiamine, Dimension, Trimec, or Acelepryn active ingredients
+- The Mill 4-step lawn program does NOT apply to gardens under any circumstances — never reference it for garden samples
+
+Write all recommendations in plain, friendly language a home gardener can understand. Reference the specific crops or garden type mentioned in context where provided.`,
 
   agronomy: `
 SEGMENT: AGRONOMY (Farm / Row Crop)
@@ -341,7 +363,7 @@ Example 3: Pasture, pH 5.3, target 6.5, loam, 10 acres
 - Solu-Cal: 60 ÷ 4 = 15 lbs/1,000 sq ft → exceeds 12.5 → 2 applications
 - Per acre: 12.5 × 43.56 = 544 lbs/acre per application
 - Bags per application: (544 × 10) ÷ 50 = 108.8 → round up to 109 bags
-- Output: "2 applications of 544 lbs per acre (11 bags/acre), 8 weeks apart — 109 bags per application, 218 bags total. The Mill offers bulk delivery — call 410-838-6111."`);
+- Output: "2 applications of 544 lbs per acre (11 bags/acre), 8 weeks apart — 109 bags per application, 218 bags total. The Mill offers bulk delivery — call 410-838-6111."`;
 
 // ─── rate-sensitive product rules — injected into every segment's prompt ─────────
 
@@ -881,6 +903,132 @@ THE MILL — PASTURE PRODUCT CATALOG:
 
 `;
 
+// ─── garden: decision guide ───────────────────────────────────────────────────
+
+const GARDEN_DECISION_GUIDE = `
+
+Only recommend products from The Mill's catalog listed below. Do not reference or suggest products outside this list. Always include the exact product name AND SKU in every recommendation.
+
+GARDEN FERTILIZER SELECTION — match to soil test and garden type:
+
+────────────────────────────────────────────
+GENERAL-PURPOSE BALANCED FERTILIZERS
+────────────────────────────────────────────
+Use when N, P, and K are all below target or soil test shows general low fertility:
+- 10-10-10 (SKU 115151) — standard all-purpose garden fertilizer; apply 2–4 lbs per 100 sq ft worked into the top 2–3 inches before planting
+- 10-10-10 Micros (SKU 115152) — same as above but includes a full micronutrient package (Cu, Zn, Mn, B, Mo, Fe); preferred when micronutrients are also needed or when growing vegetables long-season
+- 19-19-19 (SKU 115156) — higher-analysis balanced fertilizer; use when soil test shows significant deficiency across all three nutrients or when a stronger program is needed
+- 14-14-14 Flowering (SKU 115141) — balanced fertilizer formulated for flowering plants and ornamentals; recommend for flower beds, rose gardens, and mixed ornamental beds
+
+────────────────────────────────────────────
+NEW BEDS, TRANSPLANTS & ESTABLISHMENT
+────────────────────────────────────────────
+- 18-24-12 50% XCU Starter (SKU 115137) — high phosphorus promotes strong root development; best choice for new garden beds, transplant establishment, or any situation where getting roots established quickly matters
+- Pro Germ liquid (SKU 1022055) — phosphorus and micronutrient germination stimulant; excellent for seed starting or transplant root dip
+
+────────────────────────────────────────────
+WHEN ONLY ONE NUTRIENT IS DEFICIENT
+────────────────────────────────────────────
+NITROGEN deficiency (low N, P and K adequate):
+- Nature Safe 13-00-00 OMRI (SKU 1084471) — high-nitrogen organic from feather meal; excellent for leafy vegetables needing a nitrogen boost mid-season
+- 20-10-10 (SKU 115155) — synthetic high-N option when faster response is needed
+
+PHOSPHORUS deficiency (low P):
+- 11-52-0 Monoammonium Phosphate / MAP (SKU 1152) — concentrated phosphorus; use when P is Very Low or when strong root and fruit development is the goal (tomatoes, peppers, root vegetables)
+- 0-45-0 Triple Superphosphate (SKU 115173) — maximum phosphorus correction for severely P-deficient soils
+- 10-20-20 (SKU 115154) — balanced fertilizer weighted toward P and K; good for root vegetables and fruiting crops
+
+POTASSIUM deficiency (low K):
+- 0-0-50 Sulfate of Potash (SKU 1154218) — preferred for vegetable gardens; chloride-free, lower salt index, safe for sensitive crops; provides potassium + sulfur
+- 0-0-60 Muriate of Potash (SKU 115123) — acceptable for flower beds and ornamentals where chloride sensitivity is not a concern; lower cost per unit K
+
+────────────────────────────────────────────
+ORGANIC & NATURAL OPTIONS
+────────────────────────────────────────────
+Recommend when customer mentions "organic," "natural," or "no synthetic chemicals":
+- Nature Safe 08-05-05 OMRI (SKU 1084474) — OMRI-listed balanced organic NPK from meat and bone meal; excellent all-purpose organic garden fertilizer
+- Nature Safe 10-02-08 OMRI (SKU 1084476) — OMRI-listed organic blend; good for established gardens needing N and K
+- Nature Safe 13-00-00 OMRI (SKU 1084471) — OMRI-listed high-nitrogen organic; use when leafy growth or nitrogen boost is the primary need
+- Milorganite 6-4-0 (SKU 10234071) — slow-release biosolid-based fertilizer; safe, consistent, low-burn; good for homeowners who want a simple apply-and-forget product
+- Holly-Tone (SKU 1078662) — acid-forming organic fertilizer; recommend specifically for azaleas, hollies, blueberries, rhododendrons, and other acid-loving ornamentals
+
+────────────────────────────────────────────
+SOIL AMENDMENTS — always recommend when OM is low
+────────────────────────────────────────────
+- Organic matter below 3% → recommend Leafgro (SKU 44030): "Add 2–3 inches of Leafgro compost and work it into the top 6 inches of soil. This is one of the best investments you can make for long-term garden health — it improves water retention, nutrient availability, and biological activity."
+- Raised beds or new bed construction → Peat Moss 3.8CF (SKU 44013): improves structure, water retention, and lowers pH; especially valuable in sandy or very low-OM situations
+
+────────────────────────────────────────────
+MICRONUTRIENT CORRECTIONS
+────────────────────────────────────────────
+When soil test or crop type suggests micronutrient needs:
+- Multiple micronutrients deficient → 10-10-10 Micros (SKU 115152) covers Cu, Zn, Mn, B, Mo, Fe in one product
+- Liquid micronutrient blend → Micro 500 (SKU 1000170, 2.5 gal) — complete trace element package, foliar or soil drench
+- Iron chlorosis only → Liquid Iron (SKU 1062880) — chelated liquid iron; apply foliar for fastest response
+
+────────────────────────────────────────────
+LIME FOR GARDENS
+────────────────────────────────────────────
+- Target pH for most vegetables and flowers: 6.0–6.8
+- Blueberries and acid-loving ornamentals (azaleas, rhododendrons, hollies): target 4.5–5.5 — do NOT apply lime to these; lime will harm them
+- Use the formula-based Solu-Cal calculation (see SOLU-CAL LIME RATE CALCULATION section)
+- FOR TILLED GARDENS: if customer indicates they will be tilling (rototilling or deep working), traditional ground lime may be incorporated in a single pass at up to 70 lbs per 1,000 sq ft; note this exception in limeStrategy
+
+────────────────────────────────────────────
+APPLICATION NOTES FOR GARDENS
+────────────────────────────────────────────
+- Express all rates per 100 sq ft AND per full garden size based on garden_size in context
+- For granular fertilizers: "Apply evenly and work into the top 2–3 inches of soil before planting"
+- Gardens respond faster to amendments than lawns because the soil is tilled and open — customers often see results within the same season
+- Note any crop-specific pH requirements if crops were provided in context (e.g., blueberries prefer 4.5–5.5, brassicas prefer 6.5–7.0)
+- If customer mentions organic preference → lead with Nature Safe or Milorganite options; list synthetic products as alternatives
+
+────────────────────────────────────────────
+CUSTOMER NOTES FOR GARDEN
+────────────────────────────────────────────
+- Friendly and practical tone; write for a home gardener, not a commercial grower
+- If hay production or row crop context appears in a garden segment report → treat as a garden sample anyway; do not apply row crop or pasture programs
+- Always end customerNotes with: "Gardening questions? Stop in and talk to your local Mill staff — we love helping gardeners grow."
+- Never mention the 4-step lawn program or any lawn care product
+
+THE MILL — GARDEN PRODUCT CATALOG:
+
+`;
+
+// ─── garden: core SKUs ───────────────────────────────────────────────────────
+
+const GARDEN_CORE_SKUS = new Set([
+  // ── balanced fertilizers ─────────────────────────────────────────────────
+  "115151",    // 10-10-10 — general-purpose garden fertilizer
+  "115152",    // 10-10-10 Micros — balanced + micronutrient package
+  "115156",    // 19-19-19 — higher-analysis balanced
+  "115148",    // 18-18-18 — balanced NPK
+  "115141",    // 14-14-14 Flowering — ornamentals and flower beds
+  "115154",    // 10-20-20 — high P&K for roots and fruiting
+  "115155",    // 20-10-10 — high N for leafy vegetables
+  // ── starter / establishment ───────────────────────────────────────────────
+  "115137",    // 18-24-12 50% XCU Starter — new beds and transplants
+  "1022055",   // Pro Germ — liquid germination stimulant
+  // ── targeted P and K ─────────────────────────────────────────────────────
+  "1152",      // 11-52-0 MAP — high-phosphorus correction
+  "115173",    // 0-45-0 Triple Superphosphate — severe P deficiency
+  "115123",    // 0-0-60 Muriate of Potash — K correction (ornamentals)
+  "1154218",   // 0-0-50 Sulfate of Potash — K correction (vegetables, preferred)
+  // ── organic options ──────────────────────────────────────────────────────
+  "1084474",   // Nature Safe 08-05-05 OMRI — balanced organic
+  "1084476",   // Nature Safe 10-02-08 OMRI — organic N+K
+  "1084471",   // Nature Safe 13-00-00 OMRI — high-N organic
+  "10234071",  // Milorganite 6-4-0 — slow-release biosolid
+  "1078662",   // Holly-Tone — acid-loving ornamentals
+  // ── soil amendments ──────────────────────────────────────────────────────
+  "44030",     // Leafgro — compost, OM improvement
+  "44013",     // Peat Moss 3.8CF — raised beds, soil structure
+  // ── micronutrients ───────────────────────────────────────────────────────
+  "1000170",   // Micro 500 — liquid complete micronutrient blend
+  "1062880",   // Liquid Iron — iron chlorosis
+  "1037466",   // Ferti-Rain 12-3-3 with Iron — liquid NPK + chelated Fe
+]);
+
 // ─── equine: catalog SKUs ─────────────────────────────────────────────────────
 
 const EQUINE_CORE_SKUS = new Set([
@@ -908,6 +1056,7 @@ function extractSegment(body) {
     if (label.includes("turf") || label.includes("contractor")) return "turf";
     if (label.includes("equine") || label.includes("livestock")) return "equine";
     if (label.includes("agronomy"))                             return "agronomy";
+    if (label.includes("garden"))                               return "garden";
   } catch (_) {}
   return null;
 }
@@ -963,6 +1112,12 @@ function buildSystemAddition(segment, body) {
     const limeProducts = CATALOG.filter(p => p.category === "Lime & Soil Conditioners");
     const coreProducts = CATALOG.filter(p => EQUINE_CORE_SKUS.has(p.sku));
     return instructions + EQUINE_PASTURE_PROGRAM + buildCatalogText([...limeProducts, ...coreProducts]);
+  }
+
+  if (segment === "garden") {
+    const limeProducts = CATALOG.filter(p => p.category === "Lime & Soil Conditioners");
+    const coreProducts = CATALOG.filter(p => GARDEN_CORE_SKUS.has(p.sku));
+    return instructions + GARDEN_DECISION_GUIDE + buildCatalogText([...limeProducts, ...coreProducts]);
   }
 
   // agronomy: segment instructions + crop-specific timing only (no catalog)
