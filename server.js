@@ -306,68 +306,104 @@ CRITICAL: If your Solu-Cal rate equals or nearly equals the traditional lime rat
 CRITICAL: If your output mentions "the lab recommends X lbs" as a reason to change the Solu-Cal rate, you are ignoring this rule. The lab figure is irrelevant for Solu-Cal sizing in these segments.
 
 ────────────────────────────────────────────
-STEP 5 — HARD CAP AND SPLIT APPLICATIONS
+STEP 5 — APPLICATION CAP AND SPLITTING LOGIC
 ────────────────────────────────────────────
-NEVER apply more than 12.5 lbs of Solu-Cal per 1,000 sq ft in a single application — this is an absolute hard limit.
+The 12.5 lbs Solu-Cal per 1,000 sq ft figure is an ABSOLUTE PER-APPLICATION CAP — it is NEVER a target rate. The calculated rate from STEP 4 is the total amount of Solu-Cal this lawn needs this year. Splitting an application means dividing the calculated rate across multiple passes; it does NOT mean applying the cap rate multiple times. Over-liming wastes the customer's money and can drive pH past the target.
 
-- If solu_cal_lbs_per_1000 <= 12.5 → single application
-- If solu_cal_lbs_per_1000 > 12.5 → split into multiple applications:
-  - Each application = 12.5 lbs per 1,000 sq ft
-  - Number of applications = ceiling(solu_cal_lbs_per_1000 ÷ 12.5)
-  - Space applications 8 weeks apart
-  - Maximum 3 applications per year — if more needed, continue into following year
-  - Always state: "Apply X applications of 12.5 lbs per 1,000 sq ft, spaced 8 weeks apart. Do not exceed 12.5 lbs per 1,000 sq ft in any single application."
+CASE A — solu_cal_lbs_per_1000 ≤ 12.5 (calculated rate is at or below cap):
+  → DEFAULT: single application at the calculated rate. Do NOT split.
+  → EXCEPTION: split for even-coverage convenience ONLY when BOTH (a) lawn is over 20,000 sq ft AND (b) customer would benefit from two passes. If splitting under this exception, divide the CALCULATED RATE in half — each pass = solu_cal_lbs_per_1000 ÷ 2.
+  → NEVER use 12.5 as the per-application rate when the calculated rate is below 12.5. Two passes of 12.5 when the soil only needs 8.75 is over-liming by ~3×.
+
+CASE B — solu_cal_lbs_per_1000 > 12.5 and ≤ 25 (split into 2 applications):
+  → App 1 = 12.5 lbs per 1,000 sq ft (at cap).
+  → App 2 = solu_cal_lbs_per_1000 − 12.5 (the REMAINDER, not another 12.5).
+  → Space 8 weeks apart.
+  → Example: 17.5 lbs needed → App 1 = 12.5 lbs, App 2 = 5 lbs. Total applied = 17.5 lbs (matches calculated). Two passes of 12.5 lbs (= 25 lbs) is WRONG.
+
+CASE C — solu_cal_lbs_per_1000 > 25 and ≤ 37.5 (split into 3 applications):
+  → App 1 = 12.5, App 2 = 12.5, App 3 = solu_cal_lbs_per_1000 − 25 (REMAINDER).
+  → Space 8 weeks apart.
+  → Example: 30 lbs needed → 12.5 + 12.5 + 5.0. Three passes of 12.5 (= 37.5 lbs) is WRONG.
+
+CASE D — solu_cal_lbs_per_1000 > 37.5 (extreme, multi-year):
+  → Apply 3 passes this year (12.5 + 12.5 + 12.5 = 37.5 lbs total). Continue any remainder into the next growing season. Maximum 3 applications per year.
+
+CORE PRINCIPLE — the calculated Solu-Cal rate from STEP 4 is the TOTAL amount applied this year across all passes combined. Splitting reduces the per-pass dose for safety; it never increases the total. Sum of all per-application rates must equal the calculated rate (or be capped at 37.5 lbs for case D). NEVER use the cap rate (12.5) as the per-application rate when the calculated rate is lower.
 
 ────────────────────────────────────────────
 STEP 6 — BAG CALCULATIONS
 ────────────────────────────────────────────
+Calculate bags per application using the ACTUAL per-application rate from STEP 5, NOT the 12.5 cap rate, NOT the total annual rate.
+
 FOR RESIDENTIAL AND TURF (per 1,000 sq ft basis):
-bags per application = (solu_cal_lbs_per_1000 × lawn_sq_ft ÷ 1,000) ÷ 50
-Round up to nearest 0.5 bag.
-Express as: "X bags per application × Y applications = Z total bags"
-(If single application: "X bags total")
+For each scheduled application:
+  bags_per_app = (per_app_rate_lbs_per_1000 × lawn_sq_ft ÷ 1,000) ÷ 50
+  Round UP to nearest whole bag.
+Express the program per application: "App 1: X lbs per 1,000 sq ft → Y bags. App 2: Z lbs per 1,000 sq ft → W bags. Total: Y+W bags."
+For single-application case A: "Single application at X lbs per 1,000 sq ft — Y bags total."
 
 FOR PASTURE AND AGRONOMY (per acre basis):
-solu_cal_lbs_per_acre = solu_cal_lbs_per_1000 × 43.56
+solu_cal_lbs_per_acre_total = solu_cal_lbs_per_1000 × 43.56
 (43,560 sq ft per acre ÷ 1,000 = 43.56)
-Per-application cap: 12.5 × 43.56 = 544 lbs Solu-Cal per acre per application
-Bags per acre per application = 544 ÷ 50 = 10.9 → always round up = 11 bags per acre
-Total bags = bags per application × number of applications × total acres
+Per-application cap: 12.5 × 43.56 = 544 lbs Solu-Cal per acre per application — this is a CAP, not a target.
+For each scheduled application:
+  per_app_lbs_per_acre = per_app_rate_lbs_per_1000 × 43.56  (use the actual per-app rate from STEP 5; never exceed 544)
+  bags_per_acre_per_app = ceil(per_app_lbs_per_acre ÷ 50)
+  bags_per_app_total = bags_per_acre_per_app × total_acres
+Sum across all applications for grand total.
 
 FOR AGRONOMY (when lab provides lime rate in tons/acre):
 Use the lab's lime recommendation in tons/acre as the traditional lime rate.
 lab_tons_per_acre ÷ 4 = Solu-Cal tons/acre
-Solu-Cal tons/acre × 2,000 = Solu-Cal lbs/acre
-Apply 544 lbs/acre per-application cap; split into multiple passes if needed.
+Solu-Cal tons/acre × 2,000 = Solu-Cal lbs/acre TOTAL for the year
+Apply the same splitting logic above using 544 lbs/acre as the per-application CAP (never the target). Final pass = remainder, not another 544.
 Always state both the lab's traditional rate AND the Solu-Cal equivalent in limeStrategy.
 
 ────────────────────────────────────────────
 STEP 7 — ALWAYS SHOW THE MATH IN limeStrategy
 ────────────────────────────────────────────
 Every limeStrategy output must include:
-"Current pH: X.X | Target pH: X.X | Gap: X.X points | Soil texture: [loam/sandy/clay] | Traditional lime needed: XX lbs per 1,000 sq ft | Solu-Cal equivalent (÷4): XX lbs per 1,000 sq ft | Applications needed: X at 12.5 lbs per 1,000 sq ft spaced 8 weeks apart"
+"Current pH: X.X | Target pH: X.X | Gap: X.X points | Soil texture: [loam/sandy/clay] | Traditional lime needed: XX lbs per 1,000 sq ft | Solu-Cal equivalent (÷4): XX lbs per 1,000 sq ft | Application schedule: [single application at YY lbs/1,000 sq ft  OR  App 1: AA lbs/1,000 sq ft + App 2: BB lbs/1,000 sq ft (BB = remainder, not 12.5), 8 weeks apart  OR  three-pass schedule with final pass as remainder]"
 
 ────────────────────────────────────────────
 WORKED EXAMPLES — verify output matches these
 ────────────────────────────────────────────
 Example 1: Residential, pH 5.5, target 6.5, loam, 5,000 sq ft
 - Gap: 1.0 point | Traditional: 1.0 × 50 = 50 lbs/1,000 sq ft
-- Solu-Cal: 50 ÷ 4 = 12.5 lbs/1,000 sq ft → single application (exactly at cap)
-- Bags: (12.5 × 5,000 ÷ 1,000) ÷ 50 = 1.25 → round up to 1.5 bags
-- Output: "1 application of 12.5 lbs per 1,000 sq ft — 1.5 bags"
+- Solu-Cal: 50 ÷ 4 = 12.5 lbs/1,000 sq ft → CASE A, exactly at cap → single application
+- Bags: (12.5 × 5,000 ÷ 1,000) ÷ 50 = 1.25 → round up to 2 bags
+- Output: "Single application at 12.5 lbs per 1,000 sq ft — 2 bags total"
 
 Example 2: Residential, pH 5.1, target 6.5, loam, 5,000 sq ft
 - Gap: 1.4 points | Traditional: 1.4 × 50 = 70 lbs/1,000 sq ft
-- Solu-Cal: 70 ÷ 4 = 17.5 lbs/1,000 sq ft → exceeds 12.5 cap → 2 applications
-- Bags per application: (12.5 × 5,000 ÷ 1,000) ÷ 50 = 1.25 → round up to 1.5 bags
-- Output: "2 applications of 12.5 lbs per 1,000 sq ft, 8 weeks apart — 1.5 bags per application, 3 bags total"
+- Solu-Cal: 70 ÷ 4 = 17.5 lbs/1,000 sq ft → CASE B, split into 2 applications
+- App 1: 12.5 lbs/1,000 sq ft (at cap) → (12.5 × 5,000 ÷ 1,000) ÷ 50 = 1.25 → 2 bags
+- App 2: 17.5 − 12.5 = 5.0 lbs/1,000 sq ft (REMAINDER, not 12.5) → (5.0 × 5,000 ÷ 1,000) ÷ 50 = 0.5 → 1 bag
+- Total: 3 bags (= 17.5 lbs/1,000 sq ft applied across the year)
+- Output: "App 1: 12.5 lbs per 1,000 sq ft (2 bags). App 2: 5 lbs per 1,000 sq ft (1 bag), 8 weeks later. Total: 3 bags."
+- WRONG: "Two applications of 12.5 lbs per 1,000 sq ft" — that totals 25 lbs vs the 17.5 lbs actually needed.
 
-Example 3: Pasture, pH 5.3, target 6.5, loam, 10 acres
+Example 3: Residential, pH 5.8, target 6.5, loam, 33,000 sq ft (large-lawn case)
+- Gap: 0.7 points | Traditional: 0.7 × 50 = 35 lbs/1,000 sq ft
+- Solu-Cal: 35 ÷ 4 = 8.75 lbs/1,000 sq ft → CASE A, ≤ 12.5
+- Lawn is over 20,000 sq ft, so split-for-convenience is permitted but optional.
+- Single-application option: (8.75 × 33,000 ÷ 1,000) ÷ 50 = 5.775 → 6 bags total
+- Split-for-convenience option: divide CALCULATED rate in half = 4.375 lbs/1,000 sq ft per app
+   App 1: (4.375 × 33,000 ÷ 1,000) ÷ 50 = 2.89 → 3 bags
+   App 2: same → 3 bags
+   Total: 6 bags (same total as single app — only the per-pass dose differs)
+- WRONG: two applications of 12.5 lbs per 1,000 sq ft would total 25 lbs across the year (~17 bags) — far above the 8.75 lbs the soil actually needs. NEVER do this. The cap is not a target.
+
+Example 4: Pasture, pH 5.3, target 6.5, loam, 10 acres
 - Gap: 1.2 points | Traditional: 1.2 × 50 = 60 lbs/1,000 sq ft
-- Solu-Cal: 60 ÷ 4 = 15 lbs/1,000 sq ft → exceeds 12.5 → 2 applications
-- Per acre: 12.5 × 43.56 = 544 lbs/acre per application
-- Bags per application: (544 × 10) ÷ 50 = 108.8 → round up to 109 bags
-- Output: "2 applications of 544 lbs per acre (11 bags/acre), 8 weeks apart — 109 bags per application, 218 bags total. The Mill offers bulk delivery — call 410-838-6111."`;
+- Solu-Cal: 60 ÷ 4 = 15 lbs/1,000 sq ft → CASE B, split into 2 applications
+- Total Solu-Cal per acre for the year: 15 × 43.56 = 653.4 lbs/acre
+- App 1 (at cap): 12.5 × 43.56 = 544 lbs/acre. Bags: ceil(544 ÷ 50) = 11 bags/acre × 10 acres = 110 bags
+- App 2 (remainder): 15 − 12.5 = 2.5 lbs/1,000 sq ft → 2.5 × 43.56 = 108.9 lbs/acre. Bags: ceil(108.9 ÷ 50) = 3 bags/acre × 10 acres = 30 bags
+- Total: 140 bags (= 653 lbs/acre applied across the year)
+- Output: "App 1: 544 lbs per acre (110 bags). App 2: 109 lbs per acre (30 bags), 8 weeks later. Total: 140 bags."
+- WRONG: two applications of 544 lbs/acre = 1,088 lbs/acre vs the 653 lbs/acre actually needed.`;
 
 // ─── rate-sensitive product rules — injected into every segment's prompt ─────────
 
