@@ -471,6 +471,67 @@ Keep the 19-0-6 as a line item in the product purchase list in all cases.
 Add the money-saving tip as the "notes" field on the Step 2 application entry — not
 as a replacement for the product recommendation.`;
 
+// ─── No-Fertilizer-Stacking Rule — injected into every segment's prompt ─────
+
+const NO_FERTILIZER_STACKING_RULE = `
+
+NO FERTILIZER STACKING — UNIVERSAL RULE (applies to ALL segments: residential, turf contractor, equine & livestock, agronomy, garden):
+
+Never recommend two fertilizer products to be applied at the same time to the same area. Each application window must list exactly one fertilizer product per zone.
+
+WHAT COUNTS AS FERTILIZER (cannot be stacked in the same window for the same zone):
+- Any product with an N-P-K analysis (e.g. 18-0-4, 19-0-6, 22-0-14, 32-0-6, 18-24-12, 10-10-10, 11-52-0, 19-19-19, 0-0-50, 0-0-60, 46-0-0, 0-45-0, etc.)
+- Includes fertilizer + herbicide combo products (Step 1 18-0-4 Prodiamine, Step 2 19-0-6 Lockup Dimension)
+- Includes starter fertilizers (18-24-12), winterizers (32-0-6), corrective fertilizers (11-52-0 MAP, 0-45-0 Triple Super, 0-0-50 SOP, 0-0-60 MOP)
+
+WHAT IS NOT FERTILIZER AND IS EXEMPT (may always be applied alongside a fertilizer in the same window):
+- Lime products (Solu-Cal Hi Cal, Solu-Cal Magnesium, Solu-Cal Humic Plus, Solu-Cal Aqua Ca Humic Plus, agricultural lime, dolomitic lime)
+- Gypsum
+- Biological soil amendments (bio-stimulants, mycorrhizae, compost, Leafgro, peat moss)
+- Fungicides without N-P-K (e.g. standalone Azoxy & PPZ fungicide SKU 115079)
+- Insecticides without N-P-K (standalone liquid insecticides)
+- Herbicides without N-P-K (standalone liquid herbicides; granular Trimec SKU 115130 has no N-P-K and is exempt)
+- Iron alone (standalone Liquid Iron SKU 1062880, no N-P-K)
+- Soil conditioners with no N-P-K
+
+CONFLICT RESOLUTION — when the soil test calls for two different fertilizer corrections in the same timing window:
+1. Pick the single most agronomically important fertilizer product for that window.
+2. Move the secondary fertilizer product to the next available application window with at least 2–3 weeks of separation from the first.
+3. Explain the reasoning to the customer in the application note for both windows ("X was applied first because Y; Z follows in N weeks because two fertilizer products should not be applied at the same time").
+
+RESIDENTIAL APPLICATION OF THE RULE:
+- Step 1 window: exactly one fertilizer product per zone — either 18-0-4 Prodiamine (SKU 115101) OR 18-24-12 Starter (SKU 115137). NEVER both.
+- Step 2 window: exactly one fertilizer product per zone — 19-0-6 Lockup Dimension (SKU 115100).
+- Step 3 window: exactly one fertilizer product per zone — 22-0-14 50% XCU with Iron (SKU 115135).
+- Step 4 window: exactly one fertilizer product per zone — 32-0-6 30% XCU (SKU 115952).
+- If a corrective fertilizer is needed (e.g. 18-24-12 or 11-52-0 for Low/Very Low P on an established lawn), the corrective MUST be applied in its own dedicated standalone window with 2–3 weeks of separation from the nearest 4-step application. It does NOT add to a step. It does NOT share a day with a step.
+- Lime, fungicide, insecticide, granular Trimec, and standalone iron may be applied in the same window as a step product — they are exempt.
+
+TURF CONTRACTOR APPLICATION OF THE RULE:
+- Each application timing in the program lists exactly one fertilizer product per zone.
+- If multiple nutrients need correction in the same timing window, prefer a single product that addresses both (a balanced NPK or custom blend) over stacking two products.
+- Where a balanced product cannot deliver the right ratio, split into sequential applications with at least 2–3 weeks of separation.
+- Always include this note when multiple nutrients are deficient in the same window: "A custom blend addressing both [nutrient A] and [nutrient B] in a single pass may be available — ask your Mill location about custom blending options."
+
+EQUINE / LIVESTOCK PASTURE APPLICATION OF THE RULE:
+- Each pass (Spring Pass, Fall Pass) lists exactly one fertilizer product (or one nutrient delivery line) per field.
+- If both N and K are needed at the same pass and a single balanced product cannot deliver the right ratio, split into two passes with at least 2–3 weeks of separation.
+- Pasture seed, lime, and mineral supplementation are exempt and may be applied alongside a fertilizer pass.
+
+AGRONOMY APPLICATION OF THE RULE:
+- Recommendations are already expressed as lbs of nutrient per acre rather than as bagged products, so the rule is satisfied as long as each timing entry specifies a single product (or single custom blend) that delivers all required nutrients for that window.
+- When multiple nutrient corrections are required at the same crop stage, prefer a balanced NPK product or custom blend over two separate products. If a single product cannot do the job, split into sequential applications (e.g. pre-plant broadcast P/K, then at-plant N starter — different windows, not stacked).
+- Include this note when applicable: "A custom blend may be available — ask your Mill agronomist about blending options for this field's nutrient profile."
+
+GARDEN APPLICATION OF THE RULE:
+- Each garden recommendation lists exactly one fertilizer product per bed/zone per timing.
+- Lime, peat moss, Leafgro, and other soil amendments are exempt and may be combined with a fertilizer recommendation in the same application.
+
+VALIDATION CHECK — before finalizing the JSON response:
+- Walk through annualProgram (or productList for segments without a structured program) and verify that no application window contains two or more fertilizer products (products with N-P-K) for the same zone or field.
+- If a conflict is found, resolve it using the priority rules above BEFORE outputting the report. Do not emit a report that violates this rule.
+- Lime, gypsum, biologicals, fungicides, insecticides, granular Trimec, standalone iron, and pasture seed are exempt from this check and may always appear alongside a fertilizer in the same window.`;
+
 // ─── Maryland Lawn Fertilizer Law — injected into residential and turf prompts only ──
 
 const MARYLAND_FERTILIZER_LAW = `
@@ -645,11 +706,12 @@ SEEDING SCENARIO (any mention of new lawn, overseeding, bare spots, renovation):
 
 ESTABLISHED LAWN (no seeding) with Low or Very Low P:
   - Keep all 4 steps of the program intact.
-  - ADD 18-24-12 (SKU 115137) as a separate corrective application at or before Step 1.
+  - Apply 18-24-12 (SKU 115137) as a STANDALONE corrective application in its own dedicated window — NEVER on the same day or in the same window as any 4-step product (no fertilizer stacking, see NO FERTILIZER STACKING — UNIVERSAL RULE).
+  - Schedule the corrective with at least 2–3 weeks of separation from the nearest 4-step application — typically late February or early March, before Step 1 begins.
   - Apply 18-24-12 at label rate (approximately 3–4 lbs per 1,000 sq ft).
   - Calculate bags needed: lawn sq ft ÷ 12,500 sq ft per bag, round up.
-  - Note in program: "Your phosphorus is [X] ppm — [critically low / low]. The standard 4-step products are phosphorus-free, which is correct for most established lawns, but at this level a phosphorus correction is needed. Apply 18-24-12 now alongside your Step 1 application."
-  - Secondary option for severe deficiency: 11-52-0 Monoammonium Phosphate (SKU 1152) at 2–3 lbs per 1,000 sq ft as an alternative corrective.
+  - Note in program: "Your phosphorus is [X] ppm — [critically low / low]. The standard 4-step products are phosphorus-free, which is correct for most established lawns, but at this level a phosphorus correction is needed. Apply 18-24-12 as its own standalone application 2–3 weeks before Step 1 — do not apply it on the same day as Step 1, since two fertilizer products should never be stacked in the same window."
+  - Secondary option for severe deficiency: 11-52-0 Monoammonium Phosphate (SKU 1152) at 2–3 lbs per 1,000 sq ft as an alternative corrective applied in the same standalone window (instead of 18-24-12, not in addition to it).
 
 VERY LOW P (0–15 ppm) — additional handling:
   - Badge as CRITICAL in keyFindings.
@@ -1208,7 +1270,7 @@ app.post("/api/analyze", async (req, res) => {
     const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
 
     const fullSystemPrompt = typeof req.body.system === "string"
-      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + jsonInstruction
+      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + NO_FERTILIZER_STACKING_RULE + jsonInstruction
       : jsonInstruction;
 
     console.log(`[analyze] System prompt length: ${fullSystemPrompt.length} chars`);
