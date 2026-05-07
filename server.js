@@ -106,8 +106,7 @@ Use the formula-based calculation — see SOLU-CAL LIME RATE CALCULATION section
 - Apply 544 lbs/acre per-application cap; split into multiple passes of ≤544 lbs/acre if needed
 - If %Mg base saturation is below 12% → recommend Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
 - If %Mg base saturation is 12% or above → recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
-- Always state both the lab's traditional rate AND the Solu-Cal equivalent in limeStrategy
-- Always show the math in limeStrategy (see STEP 7 of the formula)
+- limeStrategy output follows the plain-language five-line format defined in STEP 7. State the lab's traditional rate and the Solu-Cal recommendation as conclusions only — never show the calculation steps or ÷4 math in the customer output.
 - Always note: "Solu-Cal corrects pH in the same growing season vs. 12-18 months for traditional lime"
 - If lime rate is 0.0 tons/acre → no lime needed, state pH is adequate
 
@@ -223,7 +222,7 @@ annualProgram — produce one timing group per crop stage (Pre-plant, At-plant, 
 
 productList for agronomy: list nutrients as lbs/acre (N, P₂O₅, K₂O, etc.) — do NOT recommend specific bagged fertilizer products.
 
-limeStrategy: use Solu-Cal with tons/acre conversion, show the full pH gap math (see STEP 7 of the formula), include both the traditional lime rate from lab and the Solu-Cal equivalent.
+limeStrategy: use Solu-Cal with tons/acre conversion. Output follows the plain-language five-line format defined in STEP 7 (per field) — state the lab's traditional tons/acre and the Solu-Cal recommendation as conclusions only. Do NOT show pH gap math, ÷4 conversion steps, or any internal calculation working in the customer output.
 
 executiveSummary: lead with yield goals, most limiting nutrients, and lime status.
 
@@ -358,13 +357,45 @@ Use the lab's lime recommendation in tons/acre as the traditional lime rate.
 lab_tons_per_acre ÷ 4 = Solu-Cal tons/acre
 Solu-Cal tons/acre × 2,000 = Solu-Cal lbs/acre TOTAL for the year
 Apply the same splitting logic above using 544 lbs/acre as the per-application CAP (never the target). Final pass = remainder, not another 544.
-Always state both the lab's traditional rate AND the Solu-Cal equivalent in limeStrategy.
+State the lab's traditional rate and the Solu-Cal recommendation as plain-language conclusions in limeStrategy per the five-line format in STEP 7 — never show the ÷4 math or calculation working in the customer output.
 
 ────────────────────────────────────────────
-STEP 7 — ALWAYS SHOW THE MATH IN limeStrategy
+STEP 7 — limeStrategy CUSTOMER-FACING OUTPUT FORMAT
 ────────────────────────────────────────────
-Every limeStrategy output must include:
-"Current pH: X.X | Target pH: X.X | Gap: X.X points | Soil texture: [loam/sandy/clay] | Traditional lime needed: XX lbs per 1,000 sq ft | Solu-Cal equivalent (÷4): XX lbs per 1,000 sq ft | Application schedule: [single application at YY lbs/1,000 sq ft  OR  App 1: AA lbs/1,000 sq ft + App 2: BB lbs/1,000 sq ft (BB = remainder, not 12.5), 8 weeks apart  OR  three-pass schedule with final pass as remainder]"
+The full calculation (pH gap × texture factor → traditional lbs → ÷4 → Solu-Cal lbs → splitting decision → bag count) MUST happen internally to derive the correct rate and bag count, but it NEVER appears in the customer-facing limeStrategy output. Customers see only the conclusion and a plain-language explanation.
+
+NEVER include in limeStrategy:
+- Calculation steps or formulas (pH gap math, texture factor, ÷4 conversion, "Traditional lime needed: XX lbs", "Solu-Cal equivalent (÷4)")
+- Soil texture assumption statements ("assuming loam", "based on loam soil texture")
+- Internal decision logic or reasoning trace ("WAIT", "let me check", "FINAL DECISION", "actually", "on second thought", "recalculating")
+- Self-corrections, rephrasings, or step-by-step working
+- References to STEP numbers, formulas, or any "the lab figure was discarded" language
+- Pipe-delimited summaries ("Current pH: X.X | Target pH: X.X | Gap: X.X | ...")
+
+REQUIRED FORMAT — RESIDENTIAL AND TURF (per 1,000 sq ft basis):
+Output exactly these lines as plain sentences, nothing more:
+Line 1 — Current pH, target pH, and recommended product:
+  "Your soil pH is 5.8 and needs to reach 6.5 — we recommend Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)."
+Line 2 — Why Hi Cal vs Magnesium (or another Solu-Cal variant), based on %Mg base saturation:
+  "Your magnesium is already adequate at 20.6% base saturation, so a high-calcium lime is the right choice."
+Line 3 — Application rate and total bag count:
+  "Apply 8.75 lbs per 1,000 sq ft — 6 bags total."
+Line 4 — ONLY if splitting; otherwise omit this line entirely:
+  "We recommend splitting into 2 applications of 4.4 lbs per 1,000 sq ft (3 bags each), 8 weeks apart."
+Line 5 — Why Solu-Cal vs traditional lime:
+  "Solu-Cal works in the same season — traditional lime takes 10–18 months."
+
+If no lime is needed (current pH ≥ target pH), output one line only:
+  "Your soil pH is X.X, which is at or above the target of Y.Y. No lime is needed at this time."
+
+REQUIRED FORMAT — EQUINE / PASTURE (per acre basis):
+Same five-line structure adapted to per-acre rates and total bag counts for the field's acreage. No internal math.
+
+REQUIRED FORMAT — AGRONOMY (multi-field, per acre, tons/acre):
+For each field, the same five-line structure adapted to per-acre rates. State the lab's traditional tons/acre figure and the recommended Solu-Cal tons/acre or lbs/acre rate as conclusions only — do NOT show the ÷4 math step or any calculation working in the customer output.
+
+REQUIRED FORMAT — GARDEN (per 100 sq ft or per bed):
+Same five-line structure adapted to garden units. No internal math.
 
 ────────────────────────────────────────────
 WORKED EXAMPLES — verify output matches these
@@ -838,7 +869,7 @@ Never use hardcoded lbs/1,000 sq ft values — always derive from the formula.
 Maximum 12.5 lbs Solu-Cal per 1,000 sq ft per application — this is an absolute hard limit.
 - Maximum 3 applications per year. If more are needed, continue into the following year.
 - One 50 lb bag covers 4,000 sq ft at 12.5 lbs per 1,000 sq ft.
-- Always show the math in limeStrategy (see STEP 7 of the formula).
+- limeStrategy uses the plain-language five-line customer-facing format defined in STEP 7. Never include calculation steps, pH gap math, ÷4 conversions, or internal decision logic in the customer output.
 
 LIME SELECTION — FOLLOW THESE RULES EXACTLY:
 Always recommend Solu-Cal over standard pelletized or pulverized lime for residential customers.
@@ -846,7 +877,7 @@ Always recommend Solu-Cal over standard pelletized or pulverized lime for reside
 - Low pH + %Mg base saturation at 12% or above → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 - Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
-In the limeStrategy field: name the specific Solu-Cal product and SKU, explain why it works faster than traditional lime (same-season results vs. 10–18 months for standard lime), state the number of applications as "X applications of 12.5 lbs per 1,000 sq ft spaced 8 weeks apart", give the exact total bag count for the full lawn, and note if the schedule runs into the following year.
+limeStrategy output: follow the five-line plain-language format defined in STEP 7. The customer sees only the conclusion — current pH and target, recommended Solu-Cal product and SKU, why that variant was chosen, application rate and bag count, split schedule (only if splitting), and the same-season vs. 10–18-month traditional comparison. Never include calculation steps or internal decision logic. If the schedule runs into the following year, note that as a separate plain-language sentence.
 
 THE MILL — RESIDENTIAL PRODUCT CATALOG:
 
@@ -869,7 +900,7 @@ Solu-Cal is The Mill's preferred lime for turf contractor customers.
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
 - Low pH + compaction or water infiltration issues → Solu-Cal Aqua Ca Humic Plus (SKU 11111035)
 Rates: Use the formula-based calculation — see SOLU-CAL LIME RATE CALCULATION section. Calculate from pH gap and soil texture; cap at 544 lbs Solu-Cal per acre per application. Do not use fixed 550/260 lbs per acre values.
-In the limeStrategy field: name the Solu-Cal product and SKU, show the full pH gap math (see STEP 7 of the formula), give per-acre rate, total product for the full job, and note labor/storage savings vs traditional lime.
+limeStrategy output: follow the five-line plain-language format defined in STEP 7, adapted to per-acre rates and total product for the full job. The customer sees only the conclusion — Solu-Cal product and SKU, why that variant was chosen, per-acre rate, total bags for the job, split schedule if applicable, and the labor/storage savings vs traditional lime. Never include pH gap math, ÷4 conversion, soil texture assumptions, or internal calculation steps.
 
 THE MILL — FULL PRODUCT CATALOG:
 
@@ -1023,13 +1054,13 @@ LIME FOR PASTURE:
   solu_cal_lbs_per_1000 = traditional_lbs_per_1000 ÷ 4
   solu_cal_lbs_per_acre = solu_cal_lbs_per_1000 × 43.56
   Cap at 544 lbs Solu-Cal per acre per application. Split into multiple passes if needed.
-  Always show the math in limeStrategy (see STEP 7 of the formula).
+  limeStrategy output uses the plain-language five-line customer format defined in STEP 7. The full calculation happens internally to derive the rate and bag count — never appears in the customer output.
 
 SOLU-CAL SELECTION FOR PASTURE:
 - Low pH + %Mg base saturation below 12% → Solu-Cal Magnesium Pelletized Lime (SKU 11110513)
 - Low pH + %Mg base saturation at 12% or above → Solu-Cal Hi Cal Calcium Pelletized Lime (SKU 11110512)
 - Low pH + Organic Matter below 2.5% → Solu-Cal Humic Plus (SKU 1103740)
-In the limeStrategy field: name the product and SKU, show the full pH gap calculation (current pH, target pH, gap, texture factor, traditional lbs, Solu-Cal lbs), per-acre rate, number of applications, and total bags needed for each field's acreage.
+limeStrategy output: follow the five-line plain-language format defined in STEP 7, adapted per field to per-acre rates and total bags for each field's acreage. The customer sees only the conclusion — Solu-Cal product and SKU, why that variant was chosen, per-acre rate, total bags, split schedule if applicable, and the same-season vs traditional lime comparison. Never show pH gap, texture factor, ÷4 conversion, or any calculation working in the customer output.
 
 FERTILIZER RECOMMENDATIONS — NUTRIENTS ONLY (no specific products):
 For the equine/livestock segment, express ALL fertility recommendations as lbs of nutrient per acre, not as specific fertilizer products or SKUs.
