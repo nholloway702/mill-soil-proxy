@@ -390,24 +390,39 @@ Coverage rates for key rate-sensitive products (50 lb bag unless noted):
 - 0-0-7 .067 Acelepryn (SKU 115084): 12,500 sq ft/bag → 4 lbs per 1,000 sq ft
 - 18-0-4 .08 Mesotrione (SKU 115111): 12,500 sq ft per 40 lb bag → 3.2 lbs per 1,000 sq ft
 
-CALCULATION METHOD for rate-sensitive products:
+CALCULATION METHOD — PRE-EMERGENT PRODUCTS SKU 115101 AND SKU 115100 (SAFETY-CRITICAL):
+For 18-0-4 25% PCU 0.38% Prodiamine (SKU 115101) and 19-0-6 Lockup .17 Dimension (SKU 115100):
+1. NEVER display decimal bag quantities (e.g. "2.7 bags", "0.4 bags").
+2. ALWAYS round DOWN to the nearest whole bag.
+3. Reason: these are herbicide products — applying too much risks phytotoxicity (burning or damaging the lawn). Do NOT round up under any circumstances.
+4. Note the uncovered area in this format: "Note: X bags covers Y sq ft. Your remaining Z sq ft may be covered by any leftover product."
+5. In application instructions: "Apply X lbs per 1,000 sq ft — do not exceed this rate"
+
+Example — 18,000 sq ft lawn, 18-0-4 Prodiamine (SKU 115101) at 12,500 sq ft per bag:
+  raw bags = 18,000 ÷ 12,500 = 1.44 → round DOWN to 1 bag
+  → "1 bag (50 lbs) — apply at 4 lbs per 1,000 sq ft, do not exceed"
+  → "Note: 1 bag covers 12,500 sq ft. Your remaining 5,500 sq ft may be covered by any leftover product."
+  WRONG: "1.5 bags" or "2 bags" — over-applying risks phytotoxicity.
+
+Example — 30,000 sq ft lawn, 19-0-6 Dimension (SKU 115100) at 11,400 sq ft per bag:
+  raw bags = 30,000 ÷ 11,400 = 2.63 → round DOWN to 2 bags
+  → "2 bags (100 lbs) — apply at 4.4 lbs per 1,000 sq ft, do not exceed"
+  → "Note: 2 bags covers 22,800 sq ft. Your remaining 7,200 sq ft may be covered by any leftover product."
+  WRONG: "2.7 bags" or "3 bags".
+
+Example — 5,000 sq ft lawn, 18-0-4 Prodiamine (SKU 115101):
+  raw bags = 5,000 ÷ 12,500 = 0.4 → round DOWN to 0 bags
+  → "0 bags — your lawn is below the minimum bag coverage for this product."
+  → "Note: 0 bags covers 0 sq ft. Your remaining 5,000 sq ft may be covered by any leftover product, or speak with Mill staff about a smaller-volume option."
+
+This round-DOWN rule supersedes any partial-bag-reuse logic for SKU 115101 and SKU 115100. The agent must never display fractional or rounded-up bag counts for these two products.
+
+CALCULATION METHOD for OTHER rate-sensitive pesticide products (SKU 115099, 115102, 115088, 115094, 115121, 115114, 115084, 115111):
 1. lbs needed = (lawn sq ft ÷ 1,000) × lbs per 1,000 sq ft rate
 2. bags needed = lbs needed ÷ bag weight
 3. Express to one decimal — e.g. "0.4 bags (20 lbs)"
 4. In application instructions: "Apply X lbs per 1,000 sq ft — do not exceed this rate"
-5. In product list: "X bags (Y lbs total)" — never "1 bag" when actual need is under 1 bag
-
-Example — 5,000 sq ft lawn, 18-0-4 Prodiamine (SKU 115101):
-  lbs needed = (5,000 ÷ 1,000) × 4 = 20 lbs
-  bags needed = 20 ÷ 50 = 0.4 bags
-  → "0.4 bags (20 lbs) — apply at 4 lbs per 1,000 sq ft, do not exceed"
-  WRONG: "1 bag" — this is 2.5× the required amount
-
-Example — 8,000 sq ft lawn, 19-0-6 Dimension (SKU 115100):
-  lbs needed = (8,000 ÷ 1,000) × 4.4 = 35.2 lbs
-  bags needed = 35.2 ÷ 50 = 0.7 bags
-  → "0.7 bags (35 lbs) — apply at 4.4 lbs per 1,000 sq ft, do not exceed"
-  WRONG: "1 bag"
+5. In product list: "X bags (Y lbs total)" — never round up to "1 bag" when actual need is under 1 bag
 
 STANDARD FERTILIZERS — rounding up to whole bags is acceptable:
 - 22-0-14, 32-0-6, 18-24-12, 19-0-10, and other fertilizers with NO pesticide active ingredient
@@ -475,16 +490,19 @@ NO-APPLICATION WINDOW (WINTER BLACKOUT):
 - Do NOT apply when rainfall greater than 0.5 inch is forecast within 24 hours.
 
 ───────────────────────────────────────────────
-PHOSPHORUS RESTRICTIONS:
+PHOSPHORUS RULES — CORRECT MARYLAND LAW:
 ───────────────────────────────────────────────
-Phosphorus (P₂O₅ > 0) may ONLY be applied under these conditions:
-  1. Soil test from within the past 3 years confirms phosphorus deficiency (rating Low or Very Low), OR
-  2. Customer is establishing a new lawn — new seeding or sod installation only in the FIRST growing season.
+Maryland law PERMITS phosphorus fertilizer on established lawns when a soil test confirms deficiency (Low or Very Low). It only PROHIBITS phosphorus when soil test levels are already Medium, Optimum, or High. NEVER tell a customer that phosphorus is restricted on an established lawn when their soil test shows a deficiency — this is incorrect and blocks a recommendation that the law explicitly allows.
 
-- For all ESTABLISHED lawns with Adequate, High, or Very High phosphorus: recommend only zero-phosphorus products.
+P CLASSIFICATION (ppm):
+- Very Low: 0–15 ppm — CRITICAL deficiency, P correction required
+- Low: 16–30 ppm — P correction recommended
+- Medium: 31–60 ppm — no P product needed; the standard 4-step is compliant
+- Optimum/High: 61+ ppm — NEVER recommend a P product (Maryland law prohibits)
+
 - The Mill 4-step core products (18-0-4, 19-0-6, 22-0-14, 32-0-6, 0-0-7 products) are ALL zero-phosphorus — fully compliant for established lawns in every case.
-- 18-24-12 Starter (SKU 115137): contains phosphorus — only recommend if (a) soil test confirms P deficiency AND overseeding/new lawn, OR (b) new lawn establishment. Do not recommend for established lawns with adequate P.
-- If soil test shows Low or Very Low phosphorus AND lawn is established (not new): note in customerNotes that phosphorus is deficient but Maryland law requires it be applied only at seeding or with a documented soil test on file. Provide the soil test documentation note.
+- 18-24-12 Starter (SKU 115137) and 11-52-0 Monoammonium Phosphate (SKU 1152) contain phosphorus — recommend ONLY when soil test ppm classification is Very Low or Low (deficient). Do NOT recommend when P is Medium, Optimum, or High.
+- When soil test shows Low or Very Low phosphorus on an established lawn: a phosphorus correction IS permitted under Maryland law and SHOULD be recommended. Do NOT use language that says P is restricted, prohibited, or "only allowed at seeding" in this scenario.
 
 ───────────────────────────────────────────────
 MAXIMUM NITROGEN PER APPLICATION:
@@ -605,6 +623,40 @@ If customer mentions new lawn, overseeding, bare spots, or new seeding:
 - Replace Step 1 with 18-24-12 50% XCU Starter Fertilizer (SKU 115137). Apply per label for new seedings. The heavy phosphorus (24%) promotes strong root development — this is the best option for any lawn establishment situation.
 - Always recommend 18-24-12 when phosphorus is low on the soil test AND customer is seeding.
 
+────────────────────────────────────────────
+PHOSPHORUS DECISION TREE — RUN ON EVERY RESIDENTIAL REPORT:
+────────────────────────────────────────────
+Apply this check before generating the program. Phosphorus deficiencies detected in the soil test must produce a phosphorus product recommendation. Never skip P when the soil test shows deficiency.
+
+STEP 1 — Read soil test P in ppm and classify:
+  Very Low: 0–15 ppm (CRITICAL)
+  Low: 16–30 ppm
+  Medium: 31–60 ppm — no P product needed; the standard 4-step is compliant
+  Optimum/High: 61+ ppm — NEVER recommend a P product (Maryland law prohibits)
+
+STEP 2 — Is the customer seeding, overseeding, or establishing a new lawn?
+
+SEEDING SCENARIO (any mention of new lawn, overseeding, bare spots, renovation):
+  - REPLACE Step 1 (18-0-4 Prodiamine) with 18-24-12 50% XCU Starter Fertilizer (SKU 115137).
+  - Pre-emergent CANNOT be used with seeding — it kills germinating seed.
+  - 18-24-12 corrects low P AND supports establishment.
+  - Keep Steps 2, 3, 4 as normal (adjust Step 2 timing if needed).
+  - Note: "Pre-emergent cannot be applied when seeding. 18-24-12 is recommended instead — it addresses your low phosphorus and supports new root development."
+
+ESTABLISHED LAWN (no seeding) with Low or Very Low P:
+  - Keep all 4 steps of the program intact.
+  - ADD 18-24-12 (SKU 115137) as a separate corrective application at or before Step 1.
+  - Apply 18-24-12 at label rate (approximately 3–4 lbs per 1,000 sq ft).
+  - Calculate bags needed: lawn sq ft ÷ 12,500 sq ft per bag, round up.
+  - Note in program: "Your phosphorus is [X] ppm — [critically low / low]. The standard 4-step products are phosphorus-free, which is correct for most established lawns, but at this level a phosphorus correction is needed. Apply 18-24-12 now alongside your Step 1 application."
+  - Secondary option for severe deficiency: 11-52-0 Monoammonium Phosphate (SKU 1152) at 2–3 lbs per 1,000 sq ft as an alternative corrective.
+
+VERY LOW P (0–15 ppm) — additional handling:
+  - Badge as CRITICAL in keyFindings.
+  - Lead the executiveSummary with the phosphorus finding.
+  - Use this exact framing in the key finding description (do NOT say P is restricted on established lawns):
+    "Your phosphorus is critically low at [X] ppm. Maryland law permits phosphorus fertilizer when a soil test confirms deficiency, which your test does. A phosphorus correction is recommended alongside your standard program."
+
 FLEXIBILITY RULES:
 - If soil data shows a specific deficiency the standard 4-step doesn't address, note it and add a targeted recommendation alongside the program.
 - If customer goals suggest a modification (heavy weed pressure, renovation, sports use), adjust and explain why.
@@ -612,10 +664,11 @@ FLEXIBILITY RULES:
 
 PRODUCT QUANTITY CALCULATIONS — FOLLOW EXACTLY:
 Get lawn size from customer context. If not provided, assume 5,000 sq ft and state that assumption.
-- Step 1 (SKU 115101): bags = lawn sq ft ÷ 12,500, round up to nearest 0.5 bag
-- Step 2 (SKU 115100): bags = lawn sq ft ÷ 11,400, round up to nearest 0.5 bag
+- Step 1 (SKU 115101): bags = lawn sq ft ÷ 12,500, round DOWN to nearest WHOLE bag (safety-critical pre-emergent — never round up). Add the "X bags covers Y sq ft. Your remaining Z sq ft may be covered by any leftover product." note per RATE-SENSITIVE PRODUCT CALCULATION RULES.
+- Step 2 (SKU 115100): bags = lawn sq ft ÷ 11,400, round DOWN to nearest WHOLE bag (safety-critical pre-emergent — never round up). Add the same coverage note.
 - Step 3 (SKU 115135): bags = lawn sq ft ÷ 15,000, round up to nearest 0.5 bag
 - Step 4 (SKU 115952): bags = lawn sq ft ÷ 22,000, round up to nearest 0.5 bag
+- 18-24-12 Starter (SKU 115137) — corrective P: bags = lawn sq ft ÷ 12,500, round up to nearest whole bag (standard fertilizer, not rate-sensitive)
 - Add-ons: follow label rate; express as whole bags in the product list
 Express all quantities as "X bags (50 lb each)" with the application rate in lbs per 1,000 sq ft — never as bags per 1,000 sq ft.
 Example: "1.5 bags (50 lb each) — apply at 3.33 lbs per 1,000 sq ft"
@@ -673,8 +726,9 @@ const RESIDENTIAL_CORE_SKUS = new Set([
   "115100",   // Step 2 — 19-0-6 Lockup .17 Dimension — mid-spring weed control
   "115135",   // Step 3 — 22-0-14 50% XCU with 5% Iron — late summer green-up
   "115952",   // Step 4 — 32-0-6 30% XCU — fall winterizer
-  // ── seeding exception ─────────────────────────────────────────────────────
-  "115137",   // 18-24-12 50% XCU Starter — replaces Step 1 when overseeding
+  // ── seeding exception / corrective P ─────────────────────────────────────
+  "115137",   // 18-24-12 50% XCU Starter — replaces Step 1 when overseeding; also primary corrective when soil P is Low/Very Low
+  "1152",     // 11-52-0 Monoammonium Phosphate (MAP) — secondary corrective for severe P deficiency
   // ── add-ons ───────────────────────────────────────────────────────────────
   "115084",   // 0-0-7 .067 Acelepryn — grub/insect control add-on
   "115079",   // Fungicide with Azoxy & PPZ — disease control add-on
