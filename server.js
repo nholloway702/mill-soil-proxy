@@ -582,6 +582,51 @@ VALIDATION CHECK — before finalizing the JSON response:
 - For garden segment: this validation check does NOT apply. Multiple fertilizer products in the same garden application are permitted under the GARDEN EXCEPTION above. Still verify that no prohibited herbicide/pre-emergent products are included and that combined nutrient loads are safe.
 - Lime, gypsum, biologicals, fungicides, insecticides, granular Trimec, standalone iron, and pasture seed are exempt from this check across all segments and may always appear alongside a fertilizer in the same window.`;
 
+// ─── Fertilizer Application Window — injected into every segment's prompt ──
+
+const FERTILIZER_APPLICATION_WINDOW_RULE = `
+
+FERTILIZER APPLICATION WINDOW — UNIVERSAL HARD RULE (applies to ALL segments: residential, turf contractor, equine & livestock, agronomy, garden):
+
+NO fertilizer product (any product with N-P-K) may be scheduled before March 15 or after November 1. This is The Mill's recommendation window — separate from and tighter than Maryland's November 15 statutory blackout, giving customers a safe buffer.
+
+THE WINDOW:
+- Fertilizer season opens: March 15
+- Fertilizer season closes: November 1
+- NEVER schedule a fertilizer application outside this window — not "Late February", not "Early March", not "Mid-November", not anything else.
+
+WHAT THIS APPLIES TO:
+- All N-P-K fertilizers — Step 1 through Step 4 products, starters, winterizers, corrective fertilizers, balanced NPKs, straight goods (Urea, MAP, MOP, SOP, Triple Super, etc.)
+- All segments — residential, turf, equine, agronomy, garden
+
+WHAT IS EXEMPT (may be scheduled outside the window):
+- Lime products (Solu-Cal Hi Cal, Solu-Cal Magnesium, Solu-Cal Humic Plus, Solu-Cal Aqua Ca Humic Plus, agricultural lime, dolomitic lime)
+- Gypsum
+- Soil amendments and biologicals (Leafgro, peat moss, compost, mycorrhizae, bio-stimulants)
+- Standalone fungicides, insecticides, and herbicides without N-P-K (e.g. Azoxy & PPZ fungicide SKU 115079, granular Trimec SKU 115130)
+- Standalone iron (Liquid Iron SKU 1062880)
+
+For lime, gypsum, and amendments scheduled before March 15 or after November 1, ALWAYS include the application note: "Do not apply on frozen ground."
+
+CORRECTIVE FERTILIZER HANDLING:
+If a corrective fertilizer (e.g. 18-24-12 for low phosphorus, 11-52-0 MAP, 0-0-50 SOP for low potassium, etc.) would otherwise be scheduled before March 15:
+- Move it INTO the March 15 window. Do NOT create a "Late Winter corrective", "Early Spring pre-Step-1", or any window dated before March 15.
+- For residential: the corrective takes the March 15 – April 15 Step 1 slot. If it replaces Step 1 (e.g. 18-24-12 replacing 18-0-4 Prodiamine for low P on an established lawn), the Step 1 application IS the corrective — there is no separate pre-Step-1 window.
+- For turf, equine, agronomy, garden: move any pre-March corrective application to the first scheduled spring pass at or after March 15.
+
+There is no agronomic benefit to applying fertilizer earlier than March 15. Cool-season turf is not actively growing in February, soil temperatures are too low for nitrogen utilization, and runoff risk on cold or wet ground is elevated.
+
+UPDATED RESIDENTIAL TIMING WINDOWS (within the March 15 – November 1 envelope):
+- Step 1 (18-0-4 Prodiamine OR 18-24-12 when replacing for low P): March 15 – April 15
+- Step 2 (19-0-6 Lockup Dimension): Mid-May – June 1
+- Step 3 (22-0-14 50% XCU with Iron): Labor Day weekend (late August – early September)
+- Step 4 (32-0-6 30% XCU): Mid-October – November 1
+
+VALIDATION CHECK — before finalizing the JSON response:
+- Walk through annualProgram and verify every fertilizer application's timing falls between March 15 and November 1 inclusive.
+- Lime, gypsum, biologicals, fungicides, insecticides, standalone herbicides, and standalone iron entries are exempt from this date check.
+- If any fertilizer entry falls outside the window, move it into the window per the corrective handling rules above and re-emit. Do not output a report that schedules a fertilizer before March 15 or after November 1.`;
+
 // ─── Maryland Lawn Fertilizer Law — injected into residential and turf prompts only ──
 
 const MARYLAND_FERTILIZER_LAW = `
@@ -701,7 +746,7 @@ Only recommend products from the catalog at the bottom of these instructions. Do
 
 THE MILL 4-STEP LAWN PROGRAM — PRIMARY RECOMMENDATION FOR ALL RESIDENTIAL CUSTOMERS:
 
-STEP 1 — Early Spring (Mid-March to April 15):
+STEP 1 — Early Spring (March 15 – April 15):
 Product: 18-0-4 25% PCU with 0.38% Prodiamine (SKU 115101)
 Rate: 1 bag per 12,500 sq ft
 Purpose: Pre-emergent weed preventer with fertilizer. Controls crabgrass, Japanese stilt grass, sand burs, and other annual weeds. This is THE #1 recommended spring pre-emergent — always lead with this for spring.
@@ -717,7 +762,7 @@ Product: 22-0-14 50% XCU with 5% Iron (SKU 115135)
 Rate: 1 bag per 15,000 sq ft (apply at 3.33 lbs per 1,000 sq ft)
 Purpose: Strengthens the plant and creates green-up after summer stress. The 5% iron delivers deep color. Crucial for rejuvenating grass after summer heat.
 
-STEP 4 — Mid-Fall (Mid to Late October):
+STEP 4 — Mid-Fall (Mid-October – November 1):
 Product: 32-0-6 30% XCU (SKU 115952)
 Rate: 1 bag per 22,000 sq ft (apply at 2.27 lbs per 1,000 sq ft)
 Purpose: Winterization fertilizer to prepare the lawn for next spring. Provides great growth and green-up. 32-0-6 is the Step 4 fall winterizer — it is ONLY used here and is NOT a general-purpose fertilizer for other steps.
@@ -755,13 +800,13 @@ SEEDING SCENARIO (any mention of new lawn, overseeding, bare spots, renovation):
   - Note: "Pre-emergent cannot be applied when seeding. 18-24-12 is recommended instead — it addresses your low phosphorus and supports new root development."
 
 ESTABLISHED LAWN (no seeding) with Low or Very Low P:
-  - Keep all 4 steps of the program intact.
-  - Apply 18-24-12 (SKU 115137) as a STANDALONE corrective application in its own dedicated window — NEVER on the same day or in the same window as any 4-step product (no fertilizer stacking, see NO FERTILIZER STACKING — UNIVERSAL RULE).
-  - Schedule the corrective with at least 2–3 weeks of separation from the nearest 4-step application — typically late February or early March, before Step 1 begins.
+  - REPLACE Step 1 (18-0-4 Prodiamine) with 18-24-12 50% XCU Starter Fertilizer (SKU 115137) in the SAME March 15 – April 15 Step 1 window. The corrective takes Step 1's slot — do NOT create a separate "Late Winter corrective", "Early Spring corrective", or any window dated before March 15. There is no agronomic benefit to applying it earlier, and the universal application window rule prohibits any fertilizer before March 15.
+  - Steps 2, 3, and 4 of the standard program remain unchanged.
+  - The customer forfeits Step 1's pre-emergent crabgrass control for this year because the P correction takes priority. Step 2 (19-0-6 Lockup Dimension) in mid-May still provides spring weed control.
   - Apply 18-24-12 at label rate (approximately 3–4 lbs per 1,000 sq ft).
   - Calculate bags needed: lawn sq ft ÷ 12,500 sq ft per bag, round up.
-  - Note in program: "Your phosphorus is [X] ppm — [critically low / low]. The standard 4-step products are phosphorus-free, which is correct for most established lawns, but at this level a phosphorus correction is needed. Apply 18-24-12 as its own standalone application 2–3 weeks before Step 1 — do not apply it on the same day as Step 1, since two fertilizer products should never be stacked in the same window."
-  - Secondary option for severe deficiency: 11-52-0 Monoammonium Phosphate (SKU 1152) at 2–3 lbs per 1,000 sq ft as an alternative corrective applied in the same standalone window (instead of 18-24-12, not in addition to it).
+  - Note in program: "Your phosphorus is [X] ppm — [critically low / low]. Because phosphorus correction is the priority for an established lawn at this level, 18-24-12 replaces Step 1 (the pre-emergent + fertilizer combo) in the March 15 – April 15 window. You will lose Step 1's pre-emergent crabgrass control for this year, but Step 2 in mid-May still provides spring weed control."
+  - Secondary option for severe deficiency: 11-52-0 Monoammonium Phosphate (SKU 1152) at 2–3 lbs per 1,000 sq ft used in place of 18-24-12 in the same March 15 – April 15 Step 1 replacement slot (one or the other — never both, never stacked).
 
 VERY LOW P (0–15 ppm) — additional handling:
   - Badge as CRITICAL in keyFindings.
@@ -1320,7 +1365,7 @@ app.post("/api/analyze", async (req, res) => {
     const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
 
     const fullSystemPrompt = typeof req.body.system === "string"
-      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + NO_FERTILIZER_STACKING_RULE + jsonInstruction
+      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + NO_FERTILIZER_STACKING_RULE + FERTILIZER_APPLICATION_WINDOW_RULE + jsonInstruction
       : jsonInstruction;
 
     console.log(`[analyze] System prompt length: ${fullSystemPrompt.length} chars`);
