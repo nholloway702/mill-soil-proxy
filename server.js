@@ -475,9 +475,9 @@ as a replacement for the product recommendation.`;
 
 const NO_FERTILIZER_STACKING_RULE = `
 
-NO FERTILIZER STACKING — UNIVERSAL RULE (applies to ALL segments: residential, turf contractor, equine & livestock, agronomy, garden):
+NO FERTILIZER STACKING — RULE (applies to residential, turf contractor, equine & livestock, and agronomy segments. GARDEN SEGMENT IS EXEMPT — see GARDEN EXCEPTION section below):
 
-Never recommend two fertilizer products to be applied at the same time to the same area. Each application window must list exactly one fertilizer product per zone.
+For all non-garden segments: never recommend two fertilizer products to be applied at the same time to the same area. Each application window must list exactly one fertilizer product per zone.
 
 WHAT COUNTS AS FERTILIZER (cannot be stacked in the same window for the same zone):
 - Any product with an N-P-K analysis (e.g. 18-0-4, 19-0-6, 22-0-14, 32-0-6, 18-24-12, 10-10-10, 11-52-0, 19-19-19, 0-0-50, 0-0-60, 46-0-0, 0-45-0, etc.)
@@ -523,14 +523,28 @@ AGRONOMY APPLICATION OF THE RULE:
 - When multiple nutrient corrections are required at the same crop stage, prefer a balanced NPK product or custom blend over two separate products. If a single product cannot do the job, split into sequential applications (e.g. pre-plant broadcast P/K, then at-plant N starter — different windows, not stacked).
 - Include this note when applicable: "A custom blend may be available — ask your Mill agronomist about blending options for this field's nutrient profile."
 
-GARDEN APPLICATION OF THE RULE:
-- Each garden recommendation lists exactly one fertilizer product per bed/zone per timing.
-- Lime, peat moss, Leafgro, and other soil amendments are exempt and may be combined with a fertilizer recommendation in the same application.
+GARDEN EXCEPTION — GARDEN SEGMENT IS EXEMPT FROM THE NO-STACKING RULE:
+Garden reports MAY recommend multiple fertilizer products in the same application when it is agronomically appropriate. Examples that are explicitly acceptable for garden recommendations:
+- 46-0-0 Urea + 0-0-60 Muriate of Potash applied together to hit a target N and K rate
+- 11-52-0 Monoammonium Phosphate + 0-0-60 Muriate of Potash applied together when both P and K are deficient
+- A balanced fertilizer (e.g. 10-10-10) + a straight good (e.g. 0-0-50 Sulfate of Potash) to fine-tune a specific nutrient
+
+Reason: garden beds are small, hand-applied areas where customers routinely combine straight goods to achieve a target analysis. The runoff and over-application risks that drive the no-stacking rule for lawns, pastures, and crop fields do not apply at garden scale.
+
+STILL PROHIBITED IN GARDEN SEGMENT (the exception does NOT loosen these existing rules):
+- Recommending the same nutrient from two different products at rates that together exceed safe application levels for the target crop or bed.
+- Any pre-emergent herbicide or post-emergent herbicide product is still prohibited (existing rule — unchanged): SKUs 115101, 115100, 115099, 115102, 115088, 115094, 115121, 115130, and any product with Prodiamine, Dimension, Trimec, or Acelepryn.
+- The 4-step lawn program never applies to gardens (existing rule — unchanged).
+
+When recommending multiple fertilizers in a garden report:
+- State the individual rate for each product clearly (e.g. "Apply 2 lbs of 11-52-0 per 100 sq ft AND 1 lb of 0-0-60 per 100 sq ft").
+- Note the combined nutrient load so the customer understands the total they are applying (e.g. "Combined: 0.22 lbs N, 1.04 lbs P2O5, 0.6 lbs K2O per 100 sq ft").
+- Confirm the combined load does not exceed safe application levels for the crop or bed type.
 
 VALIDATION CHECK — before finalizing the JSON response:
-- Walk through annualProgram (or productList for segments without a structured program) and verify that no application window contains two or more fertilizer products (products with N-P-K) for the same zone or field.
-- If a conflict is found, resolve it using the priority rules above BEFORE outputting the report. Do not emit a report that violates this rule.
-- Lime, gypsum, biologicals, fungicides, insecticides, granular Trimec, standalone iron, and pasture seed are exempt from this check and may always appear alongside a fertilizer in the same window.`;
+- For residential, turf, equine, and agronomy segments: walk through annualProgram (or productList for segments without a structured program) and verify that no application window contains two or more fertilizer products (products with N-P-K) for the same zone or field. If a conflict is found, resolve it using the priority rules above BEFORE outputting the report. Do not emit a non-garden report that violates this rule.
+- For garden segment: this validation check does NOT apply. Multiple fertilizer products in the same garden application are permitted under the GARDEN EXCEPTION above. Still verify that no prohibited herbicide/pre-emergent products are included and that combined nutrient loads are safe.
+- Lime, gypsum, biologicals, fungicides, insecticides, granular Trimec, standalone iron, and pasture seed are exempt from this check across all segments and may always appear alongside a fertilizer in the same window.`;
 
 // ─── Maryland Lawn Fertilizer Law — injected into residential and turf prompts only ──
 
