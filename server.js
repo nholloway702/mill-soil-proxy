@@ -1156,6 +1156,116 @@ const GARDEN_DECISION_GUIDE = `
 
 Only recommend products from The Mill's catalog listed below. Do not reference or suggest products outside this list. Always include the exact product name AND SKU in every recommendation.
 
+────────────────────────────────────────────────────────────
+CROP-SPECIFIC AGRONOMIC LOGIC — RUN FIRST ON EVERY GARDEN REPORT
+────────────────────────────────────────────────────────────
+
+Read the "What are you growing?" / crops field from customer context. Identify which crop group(s) apply, then use the group-specific pH targets, nutrient priorities, and product recommendations below. Crop-specific rules SUPERSEDE the generic garden logic that follows. Use the generic logic only when no crop type is specified.
+
+────────────────────────────────────────────
+GROUP 1 — ACID-LOVING FRUITS (blueberries, lingonberries, cranberries)
+────────────────────────────────────────────
+TARGET pH: 4.5–5.5 — this is the most important exception in the entire garden segment. Lime is forbidden across the entire pH range above 5.5 for these crops.
+
+pH LOGIC:
+- Soil pH > 5.5 → DO NOT recommend lime under any circumstances. Lime will harm these crops.
+- Soil pH 5.6–6.5 → recommend acidification. Primary recommendation: Holly-Tone (SKU 1078662) on a regular feeding schedule (it acidifies as it feeds). Note: "Soil sulfur (elemental sulfur) is the fastest acidifier — ask your Mill location whether soil sulfur is currently in stock as an additional or alternative acidifier."
+  Customer note: "Blueberries require acidic soil at pH 4.5–5.5. Your pH of [X] is too high. Do not apply lime — instead, work to lower pH with elemental sulfur or an acidifying fertilizer program. Ask your Mill location about sulfur availability."
+- Soil pH > 6.5 → flag as CRITICAL. Strongly advise against planting blueberries without significant acidification first. Suggest a multi-season acidification plan or growing in raised beds with peat-amended acidic soil mix.
+- Soil pH 4.5–5.5 → pH is correct. Do NOT recommend lime or acidification. Note this in customer notes as good.
+- Soil pH < 4.5 → slightly too acidic. Minor lime correction may be appropriate to raise toward 4.8–5.0. Use Solu-Cal at a small fraction of the standard rate.
+
+NUTRIENT PRIORITIES:
+- These crops prefer ammoniacal nitrogen sources, NOT nitrate. Avoid 10-10-10 (synthetic), urea, and high-nitrate fertilizers for blueberries.
+- Primary fertilizer: Holly-Tone (SKU 1078662) — specifically formulated for acid-loving plants, supplies ammoniacal nitrogen, organic and slow-release.
+- Potassium: 0-0-50 Sulfate of Potash (SKU 1154218) — preferred over muriate for blueberries (lower chloride sensitivity).
+- Customer note: "Holly-Tone is the preferred fertilizer for blueberries — it acidifies as it feeds and provides the ammoniacal nitrogen form these plants prefer."
+
+────────────────────────────────────────────
+GROUP 2 — CANE AND BRAMBLE FRUITS (strawberries, raspberries, blackberries, boysenberries)
+────────────────────────────────────────────
+TARGET pH: 5.8–6.5
+
+pH LOGIC:
+- Standard Solu-Cal lime applies if pH < 5.8.
+- Cap target at 6.5 — do NOT over-lime past this.
+
+NUTRIENT PRIORITIES:
+- Phosphorus is critical at establishment. If P is low: 18-24-12 Starter (SKU 115137) for new plantings, or 11-52-0 MAP (SKU 1152) for severe P deficiency.
+- Potassium for fruit quality: 0-0-50 Sulfate of Potash (SKU 1154218) — preferred over muriate for berry crops.
+- Balanced general feeding: 10-10-10 Micros (SKU 115152).
+- Organic option: Nature Safe 08-05-05 OMRI (SKU 1084474).
+- Customer note: "Strawberries and cane fruits respond well to phosphorus at planting — strong roots mean better fruit production in year 2."
+
+────────────────────────────────────────────
+GROUP 3 — TREE FRUITS (apples, pears, peaches, cherries, plums)
+────────────────────────────────────────────
+TARGET pH: 6.0–6.8
+
+pH LOGIC:
+- Standard Solu-Cal lime if pH < 6.0.
+- pH already 6.0–6.8 → no lime needed.
+
+NUTRIENT PRIORITIES:
+- Nitrogen: MODERATE. Fruit trees do not need aggressive N programs — high N produces excessive vegetative growth at the expense of fruit.
+- Customer note: "Fruit trees need moderate nitrogen — avoid over-feeding with nitrogen as it promotes leafy growth over fruit production."
+- Potassium critical for fruit size and quality: 0-0-60 MOP (SKU 115123) or 0-0-50 SOP (SKU 1154218) if K is low.
+- Phosphorus at establishment: 18-24-12 Starter (SKU 115137) for new plantings.
+- Calcium important for fruit quality (bitter pit in apples). If Ca is low, note it and use Solu-Cal Hi Cal Calcium (SKU 11110512) which addresses both pH and calcium.
+- Organic option: Nature Safe 10-02-08 OMRI (SKU 1084476).
+
+────────────────────────────────────────────
+GROUP 4 — VEGETABLES (tomatoes, peppers, cucumbers, squash, corn, beans, brassicas, root vegetables, mixed vegetables)
+────────────────────────────────────────────
+TARGET pH: 6.0–6.8 (tomatoes prefer 6.2–6.8; brassicas tolerate up to 7.0)
+
+pH LOGIC:
+- Standard Solu-Cal lime if below target.
+- Tilled gardens: traditional ground lime may be incorporated in a single pass at up to 70 lbs per 1,000 sq ft if customer is tilling before planting.
+
+NUTRIENT PRIORITIES:
+- Balanced primary: 10-10-10 (SKU 115151) or 10-10-10 Micros (SKU 115152, preferred for long-season vegetables).
+- High P at establishment for new beds: 18-24-12 Starter (SKU 115137).
+- Tomatoes and peppers: potassium is critical for fruit set. If K is low → 0-0-50 SOP (SKU 1154218).
+- Straight goods are permitted in garden per the GARDEN EXCEPTION to the no-fertilizer-stacking rule: 46-0-0 Urea + 0-0-60 MOP can be combined to hit specific N and K targets when a balanced product is not the right ratio.
+- Organic option: Nature Safe 08-05-05 OMRI (SKU 1084474).
+- Customer note for tomatoes: "Consistent calcium and even moisture prevent blossom end rot — if calcium is low, Solu-Cal at planting helps."
+
+────────────────────────────────────────────
+GROUP 5 — ORNAMENTALS AND FLOWERS (perennials, annuals, rose beds, mixed flower beds)
+────────────────────────────────────────────
+TARGET pH: 6.0–7.0 (roses prefer 6.0–6.5)
+
+pH LOGIC:
+- Standard Solu-Cal lime if pH < 6.0.
+- ACID-LOVING ORNAMENTALS (azaleas, rhododendrons, hollies, gardenias, mountain laurel, camellias) → treat as GROUP 1: target 4.5–5.5, NO lime, Holly-Tone is the primary fertilizer.
+
+NUTRIENT PRIORITIES (non-acid-loving ornamentals):
+- Balanced program: 10-10-10 Micros (SKU 115152) or 14-14-14 Flowering (SKU 115141, preferred for flowering plants and rose beds).
+- Phosphorus at planting for perennials: 18-24-12 Starter (SKU 115137).
+- Organic option: Nature Safe 08-05-05 OMRI (SKU 1084474).
+- For acid-loving ornamentals: Holly-Tone (SKU 1078662) is the primary recommendation regardless of soil test specifics.
+
+────────────────────────────────────────────
+MIXED-CROP CONFLICT HANDLING
+────────────────────────────────────────────
+If the customer lists multiple crops from different groups (e.g. "blueberries and tomatoes"):
+- If pH targets do NOT overlap → flag the conflict explicitly in keyFindings as a critical incompatibility. Example wording: "Blueberries require pH 4.5–5.5 while tomatoes prefer 6.2–6.8 — these crops have incompatible soil pH requirements and should not be grown in the same bed. Consider separate raised beds with individual soil management for each crop."
+- If pH targets overlap → recommend to the overlapping range. Example: tomatoes (6.2–6.8) + cucumbers (6.0–6.8) overlap at 6.2–6.8; target the overlap.
+- If multiple compatible groups are present, choose nutrient products that address the priorities of both groups (e.g. balanced 10-10-10 Micros covers tomatoes and brassicas).
+
+────────────────────────────────────────────
+UNKNOWN OR UNSPECIFIED CROPS
+────────────────────────────────────────────
+If no crop type is provided in context, fall back to generic garden logic:
+- Target pH: 6.0–6.8
+- Default fertilizer: 10-10-10 (SKU 115151) or 10-10-10 Micros (SKU 115152)
+- Apply standard Solu-Cal lime logic per the SOLU-CAL LIME RATE CALCULATION section.
+
+────────────────────────────────────────────────────────────
+END OF CROP-SPECIFIC LOGIC — generic guidance below applies as fallback / supplement
+────────────────────────────────────────────────────────────
+
 GARDEN FERTILIZER SELECTION — match to soil test and garden type:
 
 ────────────────────────────────────────────
@@ -1216,10 +1326,10 @@ When soil test or crop type suggests micronutrient needs:
 ────────────────────────────────────────────
 LIME FOR GARDENS
 ────────────────────────────────────────────
-- Target pH for most vegetables and flowers: 6.0–6.8
-- Blueberries and acid-loving ornamentals (azaleas, rhododendrons, hollies): target 4.5–5.5 — do NOT apply lime to these; lime will harm them
-- Use the formula-based Solu-Cal calculation (see SOLU-CAL LIME RATE CALCULATION section)
-- FOR TILLED GARDENS: if customer indicates they will be tilling (rototilling or deep working), traditional ground lime may be incorporated in a single pass at up to 70 lbs per 1,000 sq ft; note this exception in limeStrategy
+- Target pH depends on crop group — see CROP-SPECIFIC AGRONOMIC LOGIC above. Group 1 (blueberries, acid-loving ornamentals) targets 4.5–5.5 and NEVER receives lime when pH is at or above 5.5. Group 2 targets 5.8–6.5; Groups 3, 4, and 5 target 6.0–6.8 (or 6.0–7.0 for ornamentals).
+- For unspecified crops, default target is 6.0–6.8.
+- Use the formula-based Solu-Cal calculation (see SOLU-CAL LIME RATE CALCULATION section).
+- FOR TILLED GARDENS: if customer indicates they will be tilling (rototilling or deep working), traditional ground lime may be incorporated in a single pass at up to 70 lbs per 1,000 sq ft; note this exception in limeStrategy.
 
 ────────────────────────────────────────────
 APPLICATION NOTES FOR GARDENS
