@@ -94,7 +94,7 @@ For each zone, verify:
 REPORT READING:
 - Always read BOTH the Soil Analysis table AND the Soil Fertility Recommendations table from the PDF.
 - The lab's Soil Fertility Recommendations are the primary source of truth for nutrient rates — use them exactly as stated.
-- Capture the Farm name and Grower name separately — both appear in the report header.
+- Capture the Farm name and Grower name separately — both appear in the report header. The Grower name is the customer name for the report (per the CUSTOMER NAME AND ADDRESS — UNIVERSAL EXTRACTION RULE; never use "The Mill of Bel Air" or any Mill location as the customer name).
 - The Intended Crop column in the recommendations table is the definitive crop for each field — use it, do not rely on what staff entered in context.
 - Yield Goal is stated in the recommendations table — always reference it in the output.
 - Lime is expressed in Tons/A in agronomy reports — always use tons/acre not lbs/acre for lime.
@@ -612,6 +612,39 @@ VALIDATION CHECK — before finalizing the JSON response:
 - For residential, turf, equine, and agronomy segments: walk through annualProgram (or productList for segments without a structured program) and verify that no application window contains two or more fertilizer products (products with N-P-K) for the same zone or field. If a conflict is found, resolve it using the priority rules above BEFORE outputting the report. Do not emit a non-garden report that violates this rule.
 - For garden segment: this validation check does NOT apply. Multiple fertilizer products in the same garden application are permitted under the GARDEN EXCEPTION above. Still verify that no prohibited herbicide/pre-emergent products are included and that combined nutrient loads are safe.
 - Lime, gypsum, biologicals, fungicides, insecticides, granular Trimec, standalone iron, and pasture seed are exempt from this check across all segments and may always appear alongside a fertilizer in the same window.`;
+
+// ─── Customer Name Extraction Rule — injected into every segment's prompt ──
+
+const CUSTOMER_NAME_EXTRACTION_RULE = `
+
+CUSTOMER NAME AND ADDRESS — UNIVERSAL EXTRACTION RULE (applies to ALL segments):
+
+Waypoint Analytical soil test PDFs include two distinct name fields in the report header:
+- "Client" — almost always begins with "The Mill of Bel Air" (the lab's account holder), often followed by a person's name and address. The Mill is the lab's client; this is NOT the customer who owns the report.
+- "Grower" — the person or company who actually submitted the sample and owns the report. This is the customer name we use for reports.
+
+NAME EXTRACTION PRIORITY:
+1. Read the "Grower" field FIRST. Use the Grower name as the primary customer name for the report title, customer notes, and any salutations.
+2. If the Grower field is blank, missing, or contains only a placeholder, fall back to the name listed under Client — but ALWAYS exclude "The Mill of Bel Air" (and any other Mill location name) from that fallback. The Mill is the lab client, never the customer.
+3. Never use "The Mill of Bel Air" as the customer name under any circumstances.
+
+ADDRESS EXTRACTION (same priority):
+1. Use the Grower address when the Grower field is present.
+2. Fall back to the Client address (excluding any Mill location address) only when no Grower address is on the report.
+
+WORKED EXAMPLE — extract correctly:
+  Client: The Mill of Bel Air / Karen Holloway / 424 North Main Street, Bel Air MD 21014
+  Grower: Blw Landscaping / 1200 Grafton Shop Road / Bel Air, MD 21014
+
+  CORRECT — customer name: "Blw Landscaping"; customer address: 1200 Grafton Shop Road, Bel Air, MD 21014.
+  INCORRECT — customer name: "Karen Holloway"; customer address: 424 North Main Street.
+
+The Grower field is the source of truth even when the Client field also contains a person's name. Do not blend or combine the two fields.
+
+WHERE THIS NAME APPEARS IN THE OUTPUT JSON:
+- customer.name (or whatever field carries the customer name in the response schema)
+- customer.address
+- Any salutation or signature line in customerNotes that addresses the customer by name`;
 
 // ─── Fertilizer Application Window — injected into every segment's prompt ──
 
@@ -1598,7 +1631,7 @@ app.post("/api/analyze", async (req, res) => {
     const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
 
     const fullSystemPrompt = typeof req.body.system === "string"
-      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + NO_FERTILIZER_STACKING_RULE + FERTILIZER_APPLICATION_WINDOW_RULE + jsonInstruction
+      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + NO_FERTILIZER_STACKING_RULE + FERTILIZER_APPLICATION_WINDOW_RULE + CUSTOMER_NAME_EXTRACTION_RULE + jsonInstruction
       : jsonInstruction;
 
     console.log(`[analyze] System prompt length: ${fullSystemPrompt.length} chars`);
