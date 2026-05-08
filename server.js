@@ -883,6 +883,98 @@ THE MILL — RESIDENTIAL PRODUCT CATALOG:
 
 `;
 
+// ─── turf: program-fit decision tree ──────────────────────────────────────────
+
+const TURF_PROGRAM_DECISION_TREE = `
+
+TURF CONTRACTOR — PROGRAM-FIT DECISION TREE (RUN FIRST, BEFORE BUILDING THE PROGRAM):
+
+The Mill's residential 4-step program is one tool in the turf contractor toolkit — NOT the default for every property. Turf contractors serve athletic fields, commercial properties, HOA common areas, high-end residential, sports turf, and more. Programs must be built from the soil data and property context up — never reverse-engineered from a residential retail program.
+
+Before generating any program, assess fit using the steps below. If the 4-step is clearly the right fit, use it. If not, build the program from the soil test up.
+
+────────────────────────────────────────────────
+STEP 1 — ASSESS THE PROPERTY TYPE AND CONTEXT
+────────────────────────────────────────────────
+Read the customer context (property type, grass type, goals, acreage, contractor notes). Classify the property using the criteria below.
+
+4-STEP IS APPROPRIATE when ALL of the following are true:
+- Property is a standard cool-season residential lawn (tall fescue, Kentucky bluegrass, fine fescue, or a typical turf-type tall fescue / KBG mix).
+- Client wants a straightforward maintenance program (no sports use, no renovation, no specialty turf goals).
+- No significant soil deficiencies that the 4-step doesn't address (P/K within reasonable range, pH not severely off, no major Mg or micronutrient gaps).
+- Acreage is small enough that bagged 4-step product economics make sense (typically under ~3 acres per property; larger jobs usually favor custom blends or bulk).
+
+When 4-STEP IS APPROPRIATE:
+- Recommend the 4-step as the program backbone using the same product structure as residential, but in professional language and with per-acre and total-job quantities.
+- Add soil-test-driven corrections alongside steps as needed (e.g. corrective P if Low/Very Low, corrective K, lime per the formula).
+- Note WHY the 4-step is the right fit for this property in customerNotes — do not present it as the default.
+- Express rates in lbs per 1,000 sq ft AND total bags or gallons for the full property acreage.
+
+4-STEP IS NOT APPROPRIATE when ANY of the following apply:
+- Warm-season turf (bermudagrass, zoysiagrass, centipedegrass, St. Augustine) — different timing, different nitrogen sources, pre-emergents may not apply the same way (e.g. spring green-up vs dormant-period applications).
+- Athletic fields or sports turf (football, soccer, baseball, lacrosse, golf rough/fairway) — higher N demand, traffic-recovery programs, potassium loading for wear tolerance, different application timing aligned with sports calendar.
+- New construction, full renovation, sodding, or seeding establishment — establishment program needed; pre-emergents are contraindicated when seed germination is required.
+- Significant soil deficiencies that the 4-step products don't adequately address — Very Low P, Very Low K, severely low pH (gap > 1.0), low Mg base saturation, low Ca base saturation, or other chemistry that demands a corrective-led program.
+- Commercial or institutional turf with specific IPM requirements, fertilizer restriction policies, or mandated low-input programs.
+- Acreage where the bagged 4-step product economics don't make sense — typically over ~3 acres per property — and a custom blend, bulk delivery, or liquid program is more appropriate.
+- Contractor has specified a different program goal in context (organic-only, low-input, color-focused, drought-tolerance, etc.).
+
+When 4-STEP IS NOT APPROPRIATE:
+- Build the program from the soil test up. Do not anchor it to residential step structure.
+- Choose the best Mill products for each nutrient need rather than forcing the 4-step lineup.
+- Structure the program around seasonal timing appropriate for the turf type identified in context (cool-season vs warm-season; athletic field vs maintenance).
+- Recommend products by nutrient need and timing window, not by step number. Use windows like "Spring Pre-emergent", "Spring Greenup N", "Summer Stress Recovery", "Fall Recovery N", "Late Fall Winterizer" rather than "Step 1 / Step 2 / Step 3 / Step 4" labels.
+- Include pre-emergent timing only if appropriate for the turf type and goals (e.g. NOT during seeding establishment; warm-season pre-emergents have different timing than cool-season).
+- Flag if a custom blend would outperform individual bagged products. Always include this exact line in customerNotes when a custom blend is suggested: "Ask your Mill location about custom blending options for this property."
+- Express all quantities in lbs per 1,000 sq ft AND total bags / gallons / tons for the full property acreage.
+
+────────────────────────────────────────────────
+STEP 2 — PROGRAM STRUCTURE BY PROPERTY TYPE (when 4-step does not apply)
+────────────────────────────────────────────────
+ATHLETIC / SPORTS TURF (cool-season):
+- Higher N target (4–6 lbs N per 1,000 sq ft per year vs 2.5–3 for maintenance lawn).
+- Split into 5–6 applications, weighted toward fall and post-traffic recovery windows.
+- Potassium loading for wear tolerance — use 50% XCU products and emphasize K in late season.
+- Pre-emergent timing aligned with the sports calendar; skip if overseeding is part of the program.
+
+WARM-SEASON TURF (bermuda, zoysia, centipede):
+- N applications between green-up (typically late April/May in MD) and September only — never apply N to dormant warm-season turf.
+- Pre-emergent timing earlier than cool-season (late winter / very early spring) for crabgrass and goosegrass.
+- Lower N for centipede; standard rates for bermuda; conservative for zoysia.
+- Iron and manganese supplementation often valuable for color without driving excessive growth.
+
+NEW CONSTRUCTION / RENOVATION / ESTABLISHMENT:
+- NO pre-emergent products under any circumstances during establishment.
+- Lead with 18-24-12 50% XCU Starter (SKU 115137) at seeding/sodding for root establishment.
+- Follow up with maintenance N applications timed to growth, not to the residential step calendar.
+- Consider Pro Germ liquid (SKU 1022055) for seed treatments and transplant root development.
+
+COMMERCIAL / INSTITUTIONAL / LOW-INPUT:
+- Build to the lowest rate that meets the stated goal — do not over-apply.
+- Prefer slow-release N (XCU, PCU) and minimize pre-emergent unless weed pressure demands it.
+- Document every input clearly for the contractor's record-keeping requirements.
+
+LARGE ACREAGE (over ~3 acres):
+- Default to custom blend recommendation. State the nutrient targets in lbs/acre and let Mill staff configure the blend.
+- Include the custom-blend note in customerNotes.
+- For straight-good options, prefer 50 lb bags of 46-0-0 Urea (SKU 115158) for N, 0-0-60 MOP (SKU 115123) or 0-0-50 SOP (SKU 1154218) for K, and 11-52-0 MAP (SKU 1152) or 0-45-0 Triple Super (SKU 115173) for P.
+
+────────────────────────────────────────────────
+STEP 3 — ALWAYS MAINTAIN PROFESSIONAL TONE AND COMPLIANCE (BOTH PATHS)
+────────────────────────────────────────────────
+Regardless of which program path is chosen:
+- Use professional agronomic language: XCU, PCU, MESA, pre-emergent, post-emergent, CEC, base saturation, lbs N per 1,000 sq ft, ENR credit, slow-release fraction, tank mix.
+- Include tank mix notes where liquid supplementation applies (e.g. "Tank mix Liquid Iron SKU 1062880 with the spring N application for early-season color without driving top growth").
+- Maryland Lawn Fertilizer Law compliance applies — contractors must maintain application records (date, property address, product, rate, area treated) for 2 years; never apply on frozen ground or with rain > 0.5 in. forecast in 24 hr; commercial pesticide applicator license required for any product with a pesticide active ingredient.
+- The NO FERTILIZER STACKING rule applies — exactly one fertilizer product per application window per zone. A custom blend counts as one product.
+- The PRE-EMERGENT ROUND-DOWN safety rule applies — bag counts for SKU 115101 (18-0-4 Prodiamine) and SKU 115100 (19-0-6 Lockup Dimension) round DOWN to whole bags; never round up.
+- The MARCH 15 – NOVEMBER 1 fertilizer application window applies — no fertilizer scheduled outside that envelope.
+- Customer notes should be professional and concise — written like a program summary the contractor can share with their own client.
+
+JSON OUTPUT — PROGRAM STRUCTURE:
+- annualProgram timing labels: when 4-step applies, use "Step 1 — Early Spring", "Step 2 — Mid-Spring", etc. When 4-step does not apply, use property-appropriate window labels (e.g. "Spring Pre-emergent — March 15", "Spring Green-up — April 15", "Summer Stress Recovery — Mid-July", "Fall Recovery — September", "Late Fall Winterizer — Mid-October").
+- In customerNotes, lead with one sentence stating which program path was chosen and why ("Standard 4-step program is the right fit because…" OR "This property requires a custom program because of [warm-season turf / athletic use / renovation / acreage / soil chemistry]").`;
+
 // ─── turf: full catalog preamble ──────────────────────────────────────────────
 
 const TURF_CATALOG_PREAMBLE = `
@@ -1462,7 +1554,7 @@ function buildSystemAddition(segment, body) {
   }
 
   if (segment === "turf") {
-    return instructions + MARYLAND_FERTILIZER_LAW + TURF_CATALOG_PREAMBLE + buildCatalogText(CATALOG);
+    return instructions + MARYLAND_FERTILIZER_LAW + TURF_PROGRAM_DECISION_TREE + TURF_CATALOG_PREAMBLE + buildCatalogText(CATALOG);
   }
 
   if (segment === "equine") {
