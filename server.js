@@ -253,6 +253,46 @@ farmSummaryTable — include this as a top-level field in the JSON response. One
   - zn: Zn recommendation in lbs/acre as a number (0 if none)
   - b: B recommendation in lbs/acre as a number (0 if none)
   - notes: any lab application comments for this field (side-band placement, sulfur form, boron caution, etc.)`,
+
+  food_plot: `
+SEGMENT: FOOD PLOT / WILDLIFE (Hunter / Wildlife Manager)
+
+CUSTOMER CONTEXT FIELDS (sent by frontend):
+- plot_size: acreage of the food plot
+- existing_vegetation: current state (bare ground, established clover, brassica plot, weedy field, etc.)
+- planting_season: when they plan to plant (spring warm-season, late summer/fall cool-season, etc.)
+- intended_species: what they plan to plant (e.g. clover, brassicas, soybeans, cereal grains, mixed)
+
+PURPOSE:
+The customer has already decided what they are planting. Your job is to read the soil report and tell them exactly what their soil needs to make that planting successful. Recommend lime, fertilizer, and correction products from the Mill catalog. Do not recommend seeds or suggest they change their planting plan.
+
+SOIL CORRECTION — USE EXISTING CATALOG PRODUCTS:
+Recommend lime, fertilizer, and micronutrient products exactly as you would for an agronomy customer. Food plot soil science is the same.
+
+pH TARGETS BY SPECIES — use these to frame lime recommendations:
+- Clover, alfalfa, chicory, brassicas (turnips, radishes, rape, kale): pH 6.5–7.0. Low pH is the #1 reason these plots fail. Flag it as a top priority.
+- Cereal grains (wheat, oats, rye, triticale): pH 6.0–7.0. Tolerant of slightly lower pH but still benefit from correction.
+- Warm-season legumes (soybeans, cowpeas, lablab): pH 6.0–6.8.
+- Buckwheat: pH 5.5–7.0. Very tolerant, rarely needs lime adjustment.
+
+LIME TIMING NOTE:
+If planting is imminent (weeks away), recommend Solu-Cal for faster pH response. If planting is months away, standard ag lime or pelletized lime is fine.
+
+FERTILIZER APPROACH BY SPECIES — nitrogen strategy is critical:
+- Legumes (clover, alfalfa, soybeans, cowpeas, lablab, chicory blends): Fix their own nitrogen — NEVER recommend N fertilizer on legumes. Focus recommendations on P and K based on soil test levels. Always note: clover seed must be properly inoculated at planting for nitrogen fixation to work.
+- Brassicas (turnips, radishes, rape, kale, forage collards): Recommend N, P, and K per soil test. Higher N drives stand height and leafy growth, which improves palatability. Brassicas become most attractive to deer after the first frost when sugars concentrate — note this where relevant.
+- Cereal grains (wheat, oats, rye, triticale, jerry oats): Recommend N at planting for fast establishment. P and K per soil test. These are cool-season carbohydrate sources, important for deer during hunting season.
+- Warm-season legumes (soybeans, cowpeas, lablab): same as clovers — fix N, focus on P and K only.
+- Buckwheat: low fertility needs. Correct pH if needed, minimal fertilizer required.
+
+PRODUCT SAFETY:
+NEVER recommend:
+- Pre-emergent herbicides (Prodiamine, Dimension, etc.) — will kill food plot seedlings
+- Broadleaf herbicides (Trimec, etc.) — will kill legumes and brassicas
+- The 4-step residential lawn program
+
+TONE:
+Speak practically, like a knowledgeable agronomist advising a hunter. Frame recommendations around plot success and stand establishment. Keep it concise — this customer knows what they want to grow, they just need to know what their soil needs.`,
 };
 
 // ─── Solu-Cal formula-based lime calculation — injected into every segment's prompt ──
@@ -1522,6 +1562,28 @@ const EQUINE_CORE_SKUS = new Set([
   "36172",    // Supreme Pasture Mix — premium hay and grazing
 ]);
 
+// ─── food plot / wildlife: core SKUs ─────────────────────────────────────────
+
+const FOOD_PLOT_CORE_SKUS = new Set([
+  // ── balanced fertilizers ─────────────────────────────────────────────────
+  "115151",    // 10-10-10
+  "115156",    // 19-19-19
+  "115148",    // 18-18-18
+  // ── starter / establishment ──────────────────────────────────────────────
+  "115137",    // 18-24-12 50% XCU Starter
+  // ── nitrogen sources (brassicas / cereal grains) ─────────────────────────
+  "115158",    // 46-0-0 Urea
+  "115952",    // 32-0-6 30% XCU
+  // ── targeted P (legumes, brassicas, cereals) ─────────────────────────────
+  "1152",      // 11-52-0 MAP
+  "115173",    // 0-45-0 Triple Superphosphate
+  // ── targeted K ───────────────────────────────────────────────────────────
+  "115123",    // 0-0-60 Muriate of Potash
+  "1154218",   // 0-0-50 Sulfate of Potash
+  // ── micronutrients ───────────────────────────────────────────────────────
+  "1000170",   // Micro 500 — liquid complete micronutrient blend
+]);
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 function extractSegment(body) {
@@ -1539,6 +1601,7 @@ function extractSegment(body) {
     if (label.includes("equine") || label.includes("livestock")) return "equine";
     if (label.includes("agronomy"))                             return "agronomy";
     if (label.includes("garden"))                               return "garden";
+    if (label.includes("food") || label.includes("wildlife"))   return "food_plot";
   } catch (_) {}
   return null;
 }
@@ -1600,6 +1663,12 @@ function buildSystemAddition(segment, body) {
     const limeProducts = CATALOG.filter(p => p.category === "Lime & Soil Conditioners");
     const coreProducts = CATALOG.filter(p => GARDEN_CORE_SKUS.has(p.sku));
     return instructions + GARDEN_DECISION_GUIDE + buildCatalogText([...limeProducts, ...coreProducts]);
+  }
+
+  if (segment === "food_plot") {
+    const limeProducts = CATALOG.filter(p => p.category === "Lime & Soil Conditioners");
+    const coreProducts = CATALOG.filter(p => FOOD_PLOT_CORE_SKUS.has(p.sku));
+    return instructions + buildCatalogText([...limeProducts, ...coreProducts]);
   }
 
   // agronomy: segment instructions + crop-specific timing only (no catalog)
