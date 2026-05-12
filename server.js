@@ -686,6 +686,27 @@ WHERE THIS NAME APPEARS IN THE OUTPUT JSON:
 - customer.address
 - Any salutation or signature line in customerNotes that addresses the customer by name`;
 
+// ─── Multi-Sample Report Rule — injected into every segment's prompt ──
+
+const MULTI_SAMPLE_REPORT_RULE = `
+
+MULTI-SAMPLE SOIL REPORTS — UNIVERSAL HARD RULE (applies to ALL segments):
+
+A single soil report PDF may contain two or more Sample IDs (multiple samples submitted together). When you detect more than one Sample ID on the report, you MUST:
+
+1. PROCESS EVERY SAMPLE. Do not skip, merge, or summarize across samples. Each Sample ID gets its own analysis and its own recommendations based on its own nutrient values, pH, and CEC.
+
+2. RETURN A SINGLE JSON OBJECT. Do not return a JSON array. Do not return multiple JSON objects concatenated together. Do not wrap the response in an outer array. The response schema is identical to a single-sample response — only the textual content inside the report field changes to cover multiple samples.
+
+3. FORMAT THE REPORT TEXT AS SEPARATE, CLEARLY-LABELED SECTIONS. Inside the report/customerNotes text field, create one section per sample. Each section must:
+   - Begin with a clear header that names the Sample ID and Field ID exactly as printed on the PDF (e.g., "=== Sample ID: 12345 — Field: Back Pasture ===" or "--- Sample 2 of 3: ID 67890 (North Field) ---").
+   - Contain the full recommendation set for that sample (lime, fertilizer, products, rates, timing, notes) as if it were the only sample on the report.
+   - Be visually separated from other samples with blank lines and obvious delimiters so the customer can read each one independently.
+
+4. PRODUCT LISTS AND RATES STILL ROLL UP CORRECTLY. If the response schema includes a products/zones/recommendations array, populate it with entries from all samples. Tag each entry with its Sample ID or Field ID so the customer can match each recommendation to the right field. Do not deduplicate across samples — if two fields each need 50 lb of the same product, list both.
+
+5. NEVER emit anything outside the single JSON object — no preamble, no commentary, no trailing notes, no second JSON object.`;
+
 // ─── Fertilizer Application Window — injected into every segment's prompt ──
 
 const FERTILIZER_APPLICATION_WINDOW_RULE = `
@@ -1683,6 +1704,45 @@ function buildSystemAddition(segment, body) {
   return instructions;
 }
 
+// ─── JSON extraction helper ───────────────────────────────────────────────────
+// Pulls the first complete JSON object out of an AI response that may contain
+// markdown fences, preamble/postamble text, a JSON array (we take the first
+// element), or two concatenated objects (multi-sample reports). Returns the
+// extracted JSON substring, or the cleaned input if nothing object-shaped is
+// found (caller is responsible for trying JSON.parse and handling failure).
+
+function extractFirstJsonObject(text) {
+  if (typeof text !== "string" || !text) return "";
+
+  // Strip markdown code fences (```json ... ``` or plain ```).
+  let cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+
+  // Locate the first `{`. If the response is wrapped in a `[...]` array, the
+  // first `{` will still be the first object inside that array — exactly what
+  // we want (take element 0 only).
+  const firstBrace = cleaned.indexOf("{");
+  if (firstBrace === -1) return cleaned;
+
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+  for (let i = firstBrace; i < cleaned.length; i++) {
+    const ch = cleaned[i];
+    if (escape) { escape = false; continue; }
+    if (ch === "\\") { escape = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) return cleaned.substring(firstBrace, i + 1);
+    }
+  }
+
+  // Unbalanced braces — return from the first `{` and let JSON.parse complain.
+  return cleaned.substring(firstBrace);
+}
+
 // ─── route ────────────────────────────────────────────────────────────────────
 
 app.post("/api/analyze", async (req, res) => {
@@ -1700,7 +1760,7 @@ app.post("/api/analyze", async (req, res) => {
     const jsonInstruction = `\n\nCRITICAL: You must always return valid JSON only. No markdown, no explanation, no preamble. If the report has multiple fields or crops in a grid/table format, treat each row as a separate zone in the zones array. Never truncate the JSON — if the response would be too long, reduce the detail in customerNotes and limeStrategy but always complete the full JSON structure with all closing brackets and braces.`;
 
     const fullSystemPrompt = typeof req.body.system === "string"
-      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + NO_FERTILIZER_STACKING_RULE + FERTILIZER_APPLICATION_WINDOW_RULE + CUSTOMER_NAME_EXTRACTION_RULE + jsonInstruction
+      ? req.body.system + (addition || "") + SOLU_CAL_MANDATORY_CONVERSION + RATE_SENSITIVE_PRODUCT_RULES + NO_FERTILIZER_STACKING_RULE + FERTILIZER_APPLICATION_WINDOW_RULE + CUSTOMER_NAME_EXTRACTION_RULE + MULTI_SAMPLE_REPORT_RULE + jsonInstruction
       : jsonInstruction;
 
     console.log(`[analyze] System prompt length: ${fullSystemPrompt.length} chars`);
@@ -1752,16 +1812,25 @@ app.post("/api/analyze", async (req, res) => {
       return res.status(502).json({ error: "Bad response from AI service" });
     }
 
-    const rawText = data.content?.find(b => b.type === "text")?.text ?? "";
+    const textBlock = data.content?.find(b => b.type === "text");
+    const rawText = textBlock?.text ?? "";
     console.log("[analyze] Raw response length:", rawText.length);
     console.log("[analyze] Response preview:", rawText.substring(0, 500));
 
     if (rawText) {
+      const extracted = extractFirstJsonObject(rawText);
       try {
-        JSON.parse(rawText.replace(/```json|```/g, "").trim());
+        JSON.parse(extracted);
       } catch (jsonErr) {
         console.error("[analyze] AI returned invalid JSON:", jsonErr.message);
+        console.error("[analyze] Extracted preview:", extracted.substring(0, 500));
         return res.status(422).json({ error: "AI returned invalid JSON", raw: rawText.substring(0, 1000) });
+      }
+      // Rewrite the text block with the cleaned JSON so the frontend's
+      // JSON.parse never sees code fences, preamble, arrays, or trailing
+      // junk from multi-sample responses.
+      if (textBlock && extracted !== rawText) {
+        textBlock.text = extracted;
       }
     }
 
